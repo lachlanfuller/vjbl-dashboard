@@ -1,0 +1,1498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Shareable by link, but kept out of search engines. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#fcfcfb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1a19" media="(prefers-color-scheme: dark)">
+<title>VJBL results</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f4f1; --card: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #75736d;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11, 11, 11, .10);
+  --accent: #2a78d6; --accent-wash: rgba(42, 120, 214, .10); --other: #c3c2b7;
+  --good: #006300; --bad: #c22f2f;
+  /* Colours for clubs picked to compare (the app's club colours, in the same order). */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300;
+  --s7: #6250d6; --s8: #e34948;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0d0d0d; --card: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #9a988f;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255, 255, 255, .10);
+    --accent: #3987e5; --accent-wash: rgba(57, 135, 229, .16); --other: #52514e;
+    --good: #0ca30c; --bad: #e66767;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c;
+    --s7: #9085e9; --s8: #e66767;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+button, select, input { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.top {
+  position: sticky; top: 0; z-index: 5; background: var(--card);
+  border-bottom: 1px solid var(--border); padding-top: env(safe-area-inset-top);
+}
+.bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px 6px; max-width: 1100px; margin: 0 auto; }
+.brand { font-weight: 700; font-size: 17px; flex: 1; white-space: nowrap; }
+.bar select { max-width: min(52vw, 260px); }
+.tabs {
+  display: flex; gap: 4px; overflow-x: auto; padding: 0 12px; max-width: 1100px; margin: 0 auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a {
+  flex: none; padding: 9px 10px 10px; color: var(--ink2); text-decoration: none;
+  border-bottom: 2px solid transparent; font-weight: 500;
+}
+.tabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+main { max-width: 1100px; margin: 0 auto; padding: 14px 16px 40px; }
+h1 { font-size: 22px; margin: 4px 0 10px; }
+h2 { font-size: 17px; margin: 22px 0 8px; }
+.sub { color: var(--ink2); font-size: 13px; margin: 0 0 12px; }
+.filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 10px; margin-bottom: 12px; }
+.filters label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--ink2); }
+select, input[type=search], input[type=number] {
+  width: 100%; min-height: 40px; padding: 7px 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--card);
+}
+.seg { display: inline-flex; align-self: flex-start; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; min-height: 40px; }
+.seg button { border: 0; background: var(--card); padding: 0 12px; cursor: pointer; color: var(--ink2); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--accent-wash); color: var(--ink); font-weight: 600; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 4px 0 6px; }
+.tile { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.tile .k { font-size: 12px; color: var(--ink2); }
+.tile .v { font-size: 24px; font-weight: 600; margin-top: 2px; }
+.note { color: var(--ink2); font-size: 13px; margin: 6px 0 12px; }
+.info { background: var(--accent-wash); border-radius: 10px; padding: 10px 12px; font-size: 14px; margin: 8px 0 12px; }
+.day { font-size: 13px; font-weight: 600; color: var(--ink2); margin: 16px 0 6px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.game { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.game .meta, .game .foot { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink2); }
+.game .foot { margin-top: 6px; }
+.game .foot a { white-space: nowrap; }
+.game .row { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; }
+.game .row .score { font-variant-numeric: tabular-nums; min-width: 2.5ch; text-align: right; }
+.game .row.won { font-weight: 650; }
+.badge { font-size: 12px; font-weight: 600; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border); }
+.badge.W { color: var(--good); } .badge.L { color: var(--bad); }
+.link { cursor: pointer; text-decoration: none; color: inherit; }
+.link:hover { text-decoration: underline; }
+.mine { color: var(--accent); }
+.tablewrap { overflow-x: auto; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 8px 10px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--grid); }
+th { font-size: 12px; color: var(--ink2); font-weight: 600; position: sticky; top: 0; background: var(--card); }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+tr.hl td { background: var(--accent-wash); }
+tr.click { cursor: pointer; }
+.small { font-size: 12px; color: var(--ink2); }
+@media (max-width: 640px) {
+  .wide { display: none; }
+  th, td { padding: 8px 7px; }
+  .tabs a { padding: 9px 8px 10px; }
+}
+.more { display: block; margin: 12px auto; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); cursor: pointer; }
+.barcell { min-width: 110px; }
+.rbar { position: relative; height: 10px; background: transparent; }
+.rbar .zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--axis); }
+.rbar .fill { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--other); }
+.rbar .fill.mine { background: var(--accent); }
+.chart { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+.chart svg { display: block; width: 100%; height: auto; }
+.chart text { font: 11px system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--muted); }
+.chart .lbl { fill: var(--ink2); font-size: 12px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink2); margin: 6px 4px 2px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+.pick { min-height: 22px; font-size: 13px; color: var(--ink2); margin: 6px 4px 0; }
+footer { color: var(--muted); font-size: 12px; text-align: center; padding: 10px 16px 30px; }
+.back { display: inline-block; margin-bottom: 6px; font-size: 14px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tile .s { font-size: 12px; color: var(--ink2); margin-top: 1px; }
+.btn { min-height: 34px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); cursor: pointer; white-space: nowrap; }
+/* Clubs: attack v defence chart beside the comparison, on wide screens. */
+.duo { display: grid; gap: 12px; }
+@media (min-width: 900px) { .duo { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; } }
+.duo h2 { margin-top: 4px; }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.ph { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.ph .sub { margin-bottom: 10px; }
+.empty { padding: 20px 12px; text-align: center; color: var(--ink2); border: 1px dashed var(--axis); border-radius: 10px; font-size: 14px; }
+.empty p { margin: 0 auto 10px; max-width: 44ch; }
+.chart .dlabel { fill: var(--ink); font-size: 12px; font-weight: 600; paint-order: stroke; stroke: var(--card); stroke-width: 3; stroke-linejoin: round; }
+.cmpwrap { overflow-x: auto; }
+.cmp { display: grid; grid-template-columns: minmax(104px, 1.9fr) repeat(4, minmax(54px, 1fr)); font-size: 13px; }
+.cmp .h { font-size: 12px; color: var(--ink2); font-weight: 600; padding: 0 8px 6px 0; border-bottom: 1px solid var(--axis); }
+.cmp .c { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--grid); min-width: 0; }
+.cmp .name { display: flex; gap: 8px; align-items: flex-start; }
+.cmp .name b { display: block; font-weight: 600; overflow-wrap: break-word; }
+/* On a phone each club's name gets its own row, with its four figures below. */
+@media (max-width: 640px) {
+  .cmp { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cmp .h.club { display: none; }
+  .cmp .name { grid-column: 1 / -1; border-bottom: 0; padding-bottom: 2px; }
+  td.club { white-space: normal; min-width: 96px; }
+  .bcell .track.ctr { display: none; }
+}
+.cmp .name small { display: block; color: var(--ink2); font-size: 12px; }
+.sw { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; margin-top: 5px; }
+.x { margin-left: auto; border: 0; background: transparent; color: var(--ink2); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 4px; border-radius: 4px; }
+.mv { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* In-cell bars: a track, and a fill. Centred (ctr) bars grow either way from zero. */
+.mbar, .track { position: relative; display: block; height: 8px; border-radius: 4px; background: var(--grid); }
+.mbar { margin-top: 5px; }
+.mbar i, .track i { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 4px; background: var(--c, var(--accent)); }
+.ctr::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--ink2); opacity: .6; }
+.ctr i.pos { left: 50%; border-radius: 0 4px 4px 0; }
+.ctr i.neg { left: auto; right: 50%; border-radius: 4px 0 0 4px; }
+.track.ctr i.neg { background: var(--bad); }
+.bcell { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.bcell .track { width: 84px; flex: none; }
+@media (max-width: 640px) { .bcell .track { width: 44px; } }
+.tablewrap.tall { max-height: 640px; overflow: auto; }
+.odds { display: inline-block; min-width: 2.4em; padding: 1px 6px; border-radius: 6px; text-align: right;
+  background: color-mix(in srgb, var(--s1) calc(var(--p) * 0.5%), transparent); }
+.odds.zero { color: var(--ink2); }
+details.more { margin: 14px 0; }
+details.more > summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+details.more ul { margin: 6px 0 0; padding-left: 20px; line-height: 1.5; }
+th button.sort { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
+th button.sort:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+th .ar { font-size: 10px; width: 8px; }
+.tick { width: 18px; height: 18px; padding: 0; border-radius: 50%; border: 1.5px solid var(--axis); background: transparent; cursor: pointer; vertical-align: middle; }
+.tick[aria-checked="true"] { border-color: transparent; background: var(--c); }
+tr.picked td { background: var(--accent-wash); }
+.tip { position: fixed; z-index: 20; pointer-events: none; background: var(--ink); color: var(--card); padding: 8px 10px; border-radius: 8px; font-size: 12px; max-width: 260px; box-shadow: 0 4px 16px rgba(0, 0, 0, .22); }
+.tip .t { font-weight: 600; margin-bottom: 4px; }
+.tip .r { display: flex; justify-content: space-between; gap: 14px; }
+.tip .r span:first-child { opacity: .75; }
+.tip .r span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (forced-colors: active) { .mbar i, .track i, .tick[aria-checked="true"], .sw { forced-color-adjust: none; } }
+/* Stacked 100% bars: label, bar, key figure. On a phone the bar goes under the label. */
+.stacks { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.skeys { display: flex; gap: 6px 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink2); margin: 0 0 8px; }
+.srow { display: grid; grid-template-columns: minmax(90px, 210px) minmax(0, 1fr) 9ch; gap: 10px; align-items: center; padding: 4px 2px; font-size: 13px; border-radius: 6px; }
+.srow.click { cursor: pointer; }
+.srow.click:hover, .srow.hl { background: var(--accent-wash); }
+.sl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl small { color: var(--ink2); margin-left: 6px; }
+.sbar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--grid); }
+.sbar i { display: block; height: 100%; flex: none; }
+.sbar i + i { box-shadow: inset 1px 0 0 var(--card); }
+.sv { font-variant-numeric: tabular-nums; color: var(--ink2); font-size: 12px; text-align: right; white-space: nowrap; }
+@media (max-width: 640px) {
+  .srow { grid-template-columns: minmax(0, 1fr) auto; row-gap: 3px; }
+  .srow .sbar { grid-column: 1 / -1; grid-row: 2; }
+}
+/* Heatmap table: club column stays put while the age groups scroll. */
+.hm td.hc { text-align: center; font-variant-numeric: tabular-nums; min-width: 62px; }
+.hm td.hc.faint { color: var(--muted); }
+.hm .c { position: sticky; left: 0; background: var(--card); z-index: 1; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+.hm thead th.c { z-index: 3; }
+.hm th { text-align: center; }
+.hm tr.click:hover td.c { text-decoration: underline; }
+.ramp { display: inline-block; width: 110px; height: 10px; border-radius: 3px; vertical-align: -1px; margin: 0 6px; }
+.chart .ln { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+h3 { font-size: 14px; margin: 16px 0 6px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="bar">
+    <div class="brand">VJBL results</div>
+    <select id="season" aria-label="Season"></select>
+  </div>
+  <nav class="tabs" id="tabs">
+    <a href="#results">Results</a><a href="#ladders">Ladders</a><a href="#rankings">Rankings</a>
+    <a href="#clubs">Clubs</a><a href="#grading">Grading</a><a href="#odds" hidden>Odds</a><a href="#players">Players</a><a href="#teams">Teams</a>
+  </nav>
+</div>
+<main id="main"><p class="note">Loading…</p></main>
+<footer id="foot">Unofficial archive of VJBL results from PlayHQ.</footer>
+<script>
+"use strict";
+// ---------- helpers ----------------------------------------------------------
+const MAX = 60;  // cards/rows shown before "Show more"
+function el(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat(9)) {
+    if (kid == null || kid === false) continue;
+    e.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return e;
+}
+const SVGNS = "http://www.w3.org/2000/svg";
+function sv(tag, attrs, ...kids) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) if (v != null) e.setAttribute(k, v);
+  for (const kid of kids.flat()) if (kid != null) e.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  return e;
+}
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("vjbl:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("vjbl:" + k, JSON.stringify(v)); } catch (e) {} },
+};
+const natural = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+const uniq = (xs) => [...new Set(xs)];
+// No sign on a value that rounds to zero (so never "−0.0").
+const signed = (x, d = 1) => (x == null || isNaN(x)) ? "–" : (+Math.abs(x).toFixed(d) === 0 ? "" : x > 0 ? "+" : "−") + Math.abs(x).toFixed(d);
+const pct = (x) => (x == null || isNaN(x)) ? "–" : Math.round(x) + "%";
+const f1 = (x) => (x == null || isNaN(x)) ? "–" : x.toFixed(1);
+const plural = (n, w) => `${n.toLocaleString()} ${w}${n === 1 ? "" : "s"}`;
+const avg = (xs) => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function fmtDate(iso, year = true) {
+  if (!iso) return "Date to be confirmed";
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  return `${DAYS[dt.getDay()]} ${d} ${MONTHS[m - 1]}` + (year ? ` ${y}` : "");
+}
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function fmtTime(t) {
+  if (!t) return "";
+  let [h, m] = t.split(":").map(Number);
+  const ap = h >= 12 ? "pm" : "am"; h = h % 12 || 12;
+  return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+}
+
+// ---------- state -------------------------------------------------------------
+const S = {
+  seasons: [], folder: null, D: null,
+  f: Object.assign({ age: "", gender: "", club: "", show: "results", q: "", phase: "", grade: "",
+                     scale: "total", sort: "ppg", min: 1, pq: "", cmin: 1, csort: { k: "win", dir: -1 },
+                     cview: "overview", hmetric: "win", fmetric: "margin", smetric: "win", gphase: "", opool: "1-6" }, store.get("filters", {})),
+  myClub: store.get("myClub", ""),
+  cmp: loadCmp(),  // clubs picked to compare on the Clubs page, and their colour slots
+  cmpMsg: "",
+  limit: MAX,
+};
+function setF(k, v) { S.f[k] = v; S.limit = MAX; store.set("filters", S.f); render(); }
+function loadCmp() {
+  const c = store.get("cmp", null);
+  return c && Array.isArray(c.sel) && c.slot && typeof c.slot === "object" ? c : { sel: [], slot: {} };
+}
+
+// Hover card for chart dots.
+const TIP = el("div", { class: "tip", role: "tooltip", hidden: true });
+document.body.append(TIP);
+function hideTip() { TIP.hidden = true; }
+function showTip(node, x, y) {
+  TIP.replaceChildren(node); TIP.hidden = false;
+  const r = TIP.getBoundingClientRect();
+  let left = x + 14, top = y + 14;
+  if (left + r.width > innerWidth - 8) left = x - r.width - 14;
+  if (top + r.height > innerHeight - 8) top = y - r.height - 14;
+  TIP.style.left = Math.max(8, left) + "px"; TIP.style.top = Math.max(8, top) + "px";
+}
+
+// ---------- data --------------------------------------------------------------
+async function loadJSON(path) {
+  const r = await fetch(path, { cache: "no-cache" });
+  if (!r.ok) throw new Error(path + ": " + r.status);
+  return r.json();
+}
+function decode(raw) {
+  const D = { raw, season: raw.season, label: raw.label, updated: raw.updated, site: raw.site };
+  D.grades = raw.grades.map(([name, age, gender, phase, base], i) => ({ i, name, age, gender, phase, base }));
+  D.teams = raw.teams.map(([name, club, age, gender], i) => ({ i, name, club: club >= 0 ? raw.clubs[club] : "", age, gender }));
+  D.games = raw.games.map((r) => ({
+    date: r[0], time: r[1], grade: D.grades[r[2]], round: r[3], home: D.teams[r[4]], away: D.teams[r[5]],
+    hs: r[6], as: r[7], st: r[8], venue: r[9] >= 0 ? raw.venues[r[9]] : "", court: r[10], id: r[11],
+    forfeit: !!r[12], w: r[13], gone: !r[14],
+  }));
+  D.tg = [];  // one row per team per final game
+  for (const g of D.games) {
+    g.sides = [];
+    if (g.st !== "F") continue;
+    for (const [me, op, pf, pa, win] of [[g.home, g.away, g.hs, g.as, 1], [g.away, g.home, g.as, g.hs, 2]]) {
+      const res = g.w === win ? "W" : g.w === 0 ? "D" : "L";
+      const scored = pf != null && pa != null && !g.forfeit;
+      const row = { g, team: me, opp: op, pf, pa, res, margin: scored ? pf - pa : null };
+      D.tg.push(row);
+      g.sides.push(row);
+    }
+  }
+  D.ladders = raw.ladders.map((r) => ({
+    grade: D.grades[r[0]], pool: r[1], pos: r[2], team: D.teams[r[3]], P: r[4], W: r[5], L: r[6], Dr: r[7],
+    PF: r[8], PA: r[9], pct: r[10], pts: r[11], after: r[12], gone: !r[13],
+  }));
+  D.rating = new Map(raw.ratings.map(([ti, rating, rank, of, group]) => [ti, { rating, rank, of, group }]));
+  D.groups = raw.groups || {};
+  D.players = (raw.players || []).map(([name, num, ti, games, pts, ft, two, three, fouls]) => ({
+    name, num, team: D.teams[ti], games, pts, ft, two, three, fouls, ppg: pts / games, fpg: fouls / games }));
+  D.best = (raw.best || []).map(([name, ti, oi, date, pts, three, gi, id]) => ({
+    name, team: D.teams[ti], opp: D.teams[oi], date, pts, three, grade: D.grades[gi], id }));
+  // Each team's totals from its box scores (published whether or not players are).
+  D.scoring = (raw.scoring || []).map(([ti, games, pts, ft, two, three, fouls]) => ({
+    team: D.teams[ti], games, pts, ft, two, three, fouls, ppg: pts / games, fpg: fouls / games }));
+  D.scoringOf = new Map(D.scoring.map((s) => [s.team, s]));
+  // League odds from the grading map (an age group in grading that has a map).
+  D.odds = raw.odds ? { ...raw.odds, rows: raw.odds.rows.map(([ti, pool, rec, strength, ...p]) => ({
+    team: D.teams[ti], pool, pnum: parseInt(pool, 10), record: rec, strength, p, any: p.reduce((a, b) => a + b, 0) })) } : null;
+  D.oddsOf = new Map((D.odds?.rows ?? []).map((r) => [r.team, r]));
+  // Ladder movement: per grade (and pool), each team's position and points after every round.
+  D.lh = new Map((raw.lh || []).map(([gi, pool, rounds, dates, pinned, rows]) => [D.grades[gi].name + "|" + pool, {
+    rounds, dates, pinned: !!pinned, teams: rows.map(([ti, pos, pts]) => ({ team: D.teams[ti], pos, pts })) }]));
+  D.ages = uniq(D.teams.map((t) => t.age)).filter(Boolean).sort(natural);
+  D.genders = uniq(D.teams.map((t) => t.gender)).filter(Boolean).sort();
+  D.clubs = uniq(D.teams.map((t) => t.club)).filter(Boolean).sort(natural);
+  D.byName = new Map(D.teams.map((t) => [t.name, t]));
+  return D;
+}
+const gameUrl = (g) => g.grade.base ? g.grade.base + g.id : null;
+const isMine = (team) => !!S.myClub && team && team.club === S.myClub;
+
+// ---------- shared UI -----------------------------------------------------------
+function sel(label, key, options, { all = "All", onchange } = {}) {
+  const opts = (all ? [["", all]] : []).concat(options.map((o) => Array.isArray(o) ? o : [o, o]));
+  let value = S.f[key];
+  if (!opts.some(([v]) => v === value)) value = opts.length ? opts[0][0] : "";
+  S.f[key] = value;
+  const s = el("select", { onchange: (e) => (onchange || ((v) => setF(key, v)))(e.target.value) },
+    opts.map(([v, t]) => el("option", { value: v, selected: v === value }, t)));
+  return el("label", {}, label, s);
+}
+function search(label, key, placeholder) {
+  const i = el("input", { type: "search", value: S.f[key] || "", placeholder,
+    oninput: (e) => { clearTimeout(i._t); i._t = setTimeout(() => setF(key, e.target.value.trim()), 300); } });
+  return el("label", {}, label, i);
+}
+function seg(key, options) {
+  return el("div", { class: "seg", role: "group" }, options.map(([v, t]) =>
+    el("button", { type: "button", "aria-pressed": S.f[key] === v ? "true" : "false", onclick: () => setF(key, v) }, t)));
+}
+function tiles(items) {
+  return el("div", { class: "tiles" }, items.map(([k, v, s]) => el("div", { class: "tile" }, el("div", { class: "k" }, k), el("div", { class: "v" }, v),
+    s ? el("div", { class: "s" }, s) : null)));
+}
+function teamLink(team, cls) {
+  if (!team || !team.club) return el("span", { class: cls }, team ? team.name : "");
+  return el("a", { class: "link " + (cls || "") + (isMine(team) ? " mine" : ""), href: "#team/" + encodeURIComponent(team.name) }, team.name);
+}
+function more(total, shown) {
+  return total > shown ? el("button", { class: "more", onclick: () => { S.limit += MAX * 2; render(); } }, `Show more (${total - shown} left)`) : null;
+}
+function table(cols, rows, { rowClass, onRow } = {}) {
+  return el("div", { class: "tablewrap" }, el("table", {},
+    el("thead", {}, el("tr", {}, cols.map((c) => el("th", { class: [c.n ? "n" : "", c.wide ? "wide" : ""].join(" ") }, c.h)))),
+    el("tbody", {}, rows.map((r) => el("tr", { class: (rowClass ? rowClass(r) : "") + (onRow ? " click" : ""), onclick: onRow ? () => onRow(r) : null },
+      cols.map((c) => el("td", { class: [c.n ? "n" : "", c.wide ? "wide" : ""].join(" ") }, c.v(r))))))));
+}
+function ageGenderFilter(D, games) {
+  return (x) => (!S.f.age || x.age === S.f.age) && (!S.f.gender || x.gender === S.f.gender);
+}
+function record(rows) {
+  const w = rows.filter((r) => r.res === "W").length, l = rows.filter((r) => r.res === "L").length,
+    d = rows.filter((r) => r.res === "D").length, sc = rows.filter((r) => r.margin != null);
+  return { w, l, d, n: rows.length, winPct: rows.length ? (w + d / 2) / rows.length * 100 : null,
+    margin: avg(sc.map((r) => r.margin)), pf: avg(sc.map((r) => r.pf)), pa: avg(sc.map((r) => r.pa)), scored: sc };
+}
+const wl = (r) => `${r.w}-${r.l}` + (r.d ? `-${r.d}` : "");
+
+function gameCard(g, side) {
+  const homeWon = g.w === 1, awayWon = g.w === 2;
+  const sc = (x) => x == null ? "" : x;
+  const url = gameUrl(g);
+  let badge = null;
+  if (side && g.st === "F") {
+    const r = side.res, m = side.margin;
+    badge = el("span", { class: "badge " + r }, r + (g.forfeit ? " (forfeit)" : m != null && r !== "D" ? " " + signed(m, 0) : ""));
+  }
+  const status = { U: fmtTime(g.time) || "Time TBC", P: "Awaiting result", A: "Abandoned", F: g.forfeit ? "Forfeit" : "Final", O: "" }[g.st];
+  return el("div", { class: "game" },
+    el("div", { class: "meta" }, el("span", {}, `${g.grade.name} · ${g.round}`), badge || el("span", {}, status)),
+    el("div", { class: "row" + (homeWon ? " won" : "") }, teamLink(g.home), el("span", { class: "score" }, sc(g.hs))),
+    el("div", { class: "row" + (awayWon ? " won" : "") }, teamLink(g.away), el("span", { class: "score" }, sc(g.as))),
+    el("div", { class: "foot" }, el("span", {}, [g.venue, g.court].filter(Boolean).join(" · ") + (g.st === "F" && g.time ? " · " + fmtTime(g.time) : "")),
+      url ? el("a", { href: url, target: "_blank", rel: "noopener" }, "PlayHQ ↗") : null));
+}
+
+// ---------- Results -----------------------------------------------------------
+function viewResults(D) {
+  const out = [el("h1", {}, "Results and fixtures")];
+  out.push(el("div", { class: "filters" },
+    sel("Age", "age", D.ages), sel("Gender", "gender", D.genders), sel("Club", "club", D.clubs),
+    sel("Show", "show", [["results", "Results"], ["fixtures", "Fixtures"], ["all", "All games"]], { all: null }),
+    search("Team name contains", "q", "e.g. Knox U14 Boys 1")));
+  const q = S.f.q.toLowerCase();
+  const teamOk = (t) => (!S.f.club || t.club === S.f.club) && (!q || t.name.toLowerCase().includes(q));
+  let games = D.games.filter((g) => ageGenderFilter()(g.grade) && (teamOk(g.home) || teamOk(g.away)));
+  const finals = games.filter((g) => g.st === "F");
+  const persp = !!(S.f.club || q);
+  if (persp) {
+    const rows = D.tg.filter((r) => teamOk(r.team) && ageGenderFilter()(r.g.grade));
+    const r = record(rows);
+    out.push(tiles([["Wins-losses" + (r.d ? "-draws" : ""), wl(r)], ["Win %", pct(r.winPct)],
+      ["Average margin", signed(r.margin)], ["Average score", r.pf == null ? "–" : `${r.pf.toFixed(1)} – ${r.pa.toFixed(1)}`]]));
+    const notes = [`${finals.length} results`];
+    if (r.scored.length) {
+      const best = r.scored.reduce((a, b) => b.margin > a.margin ? b : a), worst = r.scored.reduce((a, b) => b.margin < a.margin ? b : a);
+      if (best.margin > 0) notes.push(`biggest win ${signed(best.margin, 0)} v ${best.opp.name}`);
+      if (worst.margin < 0) notes.push(`heaviest loss ${signed(worst.margin, 0)} v ${worst.opp.name}`);
+    }
+    out.push(el("p", { class: "note" }, notes.join(" · ")));
+  } else {
+    const won = finals.filter((g) => g.hs != null && g.as != null && !g.forfeit && g.hs !== g.as).map((g) => Math.abs(g.hs - g.as));
+    out.push(tiles([["Games", games.length.toLocaleString()], ["Results", finals.length.toLocaleString()],
+      ["Average winning margin", won.length ? avg(won).toFixed(1) : "–"],
+      ["Close games (≤5 pts)", won.length ? `${won.filter((x) => x <= 5).length} (${pct(won.filter((x) => x <= 5).length / won.length * 100)})` : "–"]]));
+  }
+  const show = S.f.show, today = todayISO();
+  // Forfeits PlayHQ records ahead of time are listed with the fixtures.
+  const upcoming = (g) => g.st === "U" || (g.date && g.date > today);
+  if (show === "results") games = games.filter((g) => !upcoming(g));
+  if (show === "fixtures") games = games.filter(upcoming);
+  const asc = show === "fixtures";
+  games.sort((a, b) => (asc ? 1 : -1) * ((a.date || "9").localeCompare(b.date || "9") || (a.time || "").localeCompare(b.time || "")) || natural(a.grade.name, b.grade.name));
+  if (!games.length) { out.push(el("p", { class: "note" }, "No games match.")); return out; }
+  const sideOf = (g) => persp ? g.sides.find((r) => teamOk(r.team)) : null;
+  let day = null, cards = null;
+  for (const g of games.slice(0, S.limit)) {
+    if (g.date !== day) { day = g.date; out.push(el("div", { class: "day" }, fmtDate(g.date))); cards = el("div", { class: "cards" }); out.push(cards); }
+    cards.append(gameCard(g, sideOf(g)));
+  }
+  out.push(more(games.length, S.limit));
+  return out;
+}
+
+// ---------- Ladders -----------------------------------------------------------
+function viewLadders(D) {
+  const out = [el("h1", {}, "Ladders")];
+  if (!D.ladders.length) return out.concat(el("p", { class: "note" }, "No ladders yet."));
+  const lad = D.ladders.filter((r) => r.grade);
+  const ages = uniq(lad.map((r) => r.grade.age)).sort(natural), genders = uniq(lad.map((r) => r.grade.gender)).sort();
+  const f1 = el("div", { class: "filters" });
+  f1.append(sel("Age", "age", ages, { all: null }), sel("Gender", "gender", genders, { all: null }));
+  let rows = lad.filter((r) => r.grade.age === S.f.age && r.grade.gender === S.f.gender);
+  f1.append(sel("Competition", "phase", uniq(rows.map((r) => r.grade.phase)).sort(natural), { all: null }));
+  rows = rows.filter((r) => r.grade.phase === S.f.phase);
+  f1.append(sel("Grade", "grade", uniq(rows.map((r) => r.grade.name)).sort(natural), { all: null }));
+  rows = rows.filter((r) => r.grade.name === S.f.grade);
+  out.push(f1);
+  const pools = uniq(rows.map((r) => r.pool));
+  for (const pool of pools) {
+    const pr = rows.filter((r) => r.pool === pool).sort((a, b) => a.pos - b.pos);
+    out.push(el("h2", {}, S.f.grade + (pool ? " · " + pool : "")));
+    const notes = [pr[0].after ? "After " + pr[0].after : "", pr.every((r) => r.gone) ? "No longer on PlayHQ; this is the last ladder saved" : ""].filter(Boolean);
+    if (notes.length) out.push(el("p", { class: "sub" }, notes.join(" · ")));
+    out.push(table([
+      { h: "Pos", n: 1, v: (r) => r.pos }, { h: "Team", v: (r) => teamLink(r.team) },
+      { h: "P", n: 1, v: (r) => r.P }, { h: "W", n: 1, v: (r) => r.W }, { h: "L", n: 1, v: (r) => r.L },
+      { h: "D", n: 1, wide: 1, v: (r) => r.Dr }, { h: "PF", n: 1, wide: 1, v: (r) => r.PF }, { h: "PA", n: 1, wide: 1, v: (r) => r.PA },
+      { h: "%", n: 1, v: (r) => r.pct == null ? "" : r.pct.toFixed(1) }, { h: "Pts", n: 1, v: (r) => r.pts },
+    ], pr, { rowClass: (r) => isMine(r.team) ? "hl" : "" }));
+    const h = D.lh.get(S.f.grade + "|" + pool);
+    if (h && h.rounds.length > 1) out.push(el("h3", {}, "Ladder movement"), ladderMove(h),
+      el("p", { class: "small" }, "Each team's position after every round, rebuilt from the results (3 points a win, 2 a draw, 1 a loss, " +
+        "0 for forfeiting, 3 a bye; ties split on percentage)." + (h.pinned ? " The last round is PlayHQ's own ladder, which can " +
+        "order tied teams differently (and in some grades adds points carried from earlier games)." : "") +
+        " Your club and clubs you compare on the Clubs page are coloured."));
+    else if (h) out.push(el("p", { class: "small" }, "A ladder movement chart appears here after the second round."));
+  }
+  return out;
+}
+// Positions round by round (1 at the top), one line per team, named at the right.
+function ladderMove(h) {
+  const n = h.teams.length, any = h.teams.some((t) => clubColour(t.team.club));
+  const series = h.teams.map((t, i) => {
+    const col = clubColour(t.team.club);
+    return { name: t.team.name, colour: col || (any ? null : `var(--s${i % 8 + 1})`), strong: !!col || !any,
+      ys: t.pos, tips: t.pos.map((p, k) => `${t.team.name}\nAfter ${h.rounds[k]}${h.dates[k] ? " (" + fmtDate(h.dates[k], false) + ")" : ""}: ` +
+        `${ordinal(p)}\n${+t.pts[k].toFixed(2)} points`) };
+  });
+  return lineChart(h.rounds.map((r) => r.replace(/^Round\s*/i, "R")), series, {
+    label: "Ladder position after each round", reverse: true, integer: true, yMin: 1, yMax: Math.max(2, n), ends: true,
+    legend: false, yLabel: "Position", fmt: (v) => String(v), height: Math.max(220, Math.min(440, 34 * n + 60)) });
+}
+
+// ---------- Rankings ----------------------------------------------------------
+function viewRankings(D) {
+  const out = [el("h1", {}, "Power rankings"),
+    el("p", { class: "sub" }, "Rating = points better than an average team in the age group, from every scored game's margin, adjusted for how strong the opponents were.")];
+  const rated = D.teams.filter((t) => D.rating.has(t.i));
+  if (!rated.length) return out.concat(el("p", { class: "note" }, "No results yet."));
+  const ages = uniq(rated.map((t) => t.age)).sort(natural), genders = uniq(rated.map((t) => t.gender)).sort();
+  out.push(el("div", { class: "filters" }, sel("Age", "age", ages, { all: null }), sel("Gender", "gender", genders, { all: null }),
+    sel("Club", "club", D.clubs)));
+  const groups = D.groups[S.f.age + "|" + S.f.gender] || 1;
+  if (groups > 1) out.push(el("div", { class: "info" }, `These teams fall into ${groups} groups that haven't played each other yet (for example separate grading pools), so compare ratings within a pool; across pools they're a rough guide.`));
+  let rows = rated.filter((t) => t.age === S.f.age && t.gender === S.f.gender).map((t) => ({ t, ...D.rating.get(t.i) }))
+    .sort((a, b) => a.rank - b.rank);
+  if (S.f.club) rows = rows.filter((r) => r.t.club === S.f.club);
+  const recs = new Map();
+  for (const r of D.tg) { if (!recs.has(r.team.i)) recs.set(r.team.i, []); recs.get(r.team.i).push(r); }
+  const top = Math.max(1, ...rows.map((r) => Math.abs(r.rating)));
+  const shown = rows.slice(0, S.limit);
+  out.push(table([
+    { h: "#", n: 1, v: (r) => r.rank }, { h: "Team", v: (r) => teamLink(r.t) },
+    { h: "Rating", n: 1, v: (r) => signed(r.rating) },
+    { h: "", wide: 0, v: (r) => { const w = Math.abs(r.rating) / top * 50; return el("div", { class: "barcell" }, el("div", { class: "rbar" }, el("div", { class: "zero" }),
+        el("div", { class: "fill" + (isMine(r.t) ? " mine" : ""), style: `left:${r.rating >= 0 ? 50 : 50 - w}%;width:${Math.max(w, 0.6)}%` }))); } },
+    { h: "W-L", n: 1, v: (r) => wl(record(recs.get(r.t.i) || [])) },
+  ], shown, { rowClass: (r) => isMine(r.t) ? "hl" : "" }));
+  out.push(more(rows.length, shown.length));
+  return out;
+}
+
+// ---------- Clubs -------------------------------------------------------------
+const MAX_CMP = 6;
+function viewClubs(D) {
+  const out = [el("h1", {}, "Clubs"),
+    el("div", { class: "filters" }, el("label", {}, "View", seg("cview", [["overview", "Overview"], ["ages", "Age groups"], ["form", "Form"], ["seasons", "Seasons"]])))];
+  out.push(el("div", { class: "filters" }, sel("Age", "age", D.ages), sel("Gender", "gender", D.genders),
+    el("label", {}, "Minimum games", el("input", { type: "number", min: 1, max: 99, value: S.f.cmin,
+      onchange: (e) => setF("cmin", Math.max(1, +e.target.value || 1)) }))));
+  const ok = (x) => (!S.f.age || x.age === S.f.age) && (!S.f.gender || x.gender === S.f.gender);
+  const list = clubStats(D, ok);
+  if (S.f.cview === "seasons") return out.concat(clubSeasons(D, list));
+  if (!list.length) return out.concat(el("p", { class: "note" }, "No results yet."));
+  if (S.f.cview === "ages") return out.concat(clubAges(D, ok, list));
+  if (S.f.cview === "form") return out.concat(clubForm(D, ok, list));
+
+  // League-wide figures for this age group and gender.
+  const fin = D.games.filter((g) => g.st === "F" && ok(g.grade));
+  const sc = fin.filter((g) => g.hs != null && g.as != null && !g.forfeit);
+  out.push(tiles([
+    ["Results", fin.length.toLocaleString(), `${sc.length.toLocaleString()} with a score`],
+    ["Clubs", list.length.toLocaleString(), `${D.clubs.length} in the season`],
+    ["Average total points", sc.length ? avg(sc.map((g) => g.hs + g.as)).toFixed(1) : "–", "both teams, per game"],
+    ["Average margin", sc.length ? avg(sc.map((g) => Math.abs(g.hs - g.as))).toFixed(1) : "–", "points between the teams"],
+    ["Home win rate", sc.length ? pct(avg(sc.map((g) => g.hs > g.as ? 100 : g.hs === g.as ? 50 : 0))) : "–", "draws count as half"],
+  ]));
+
+  const shown = list.filter((c) => c.rec.n >= S.f.cmin);
+  const board = boardRows(shown);
+  const hidden = list.length - shown.length;
+  out.push(el("div", { class: "duo" },
+    el("div", { class: "panel chart" },
+      el("h2", {}, "Attack v defence"),
+      el("p", { class: "sub" }, "Average points scored against points conceded per game, one dot per club; bigger dots have played more games. " +
+        "Clubs above the line outscore their opponents. Tap a dot to compare."),
+      attackDefence(shown)),
+    comparePanel(list, board)));
+
+  out.push(el("h2", {}, "Club leaderboard"),
+    el("p", { class: "sub" }, `${plural(board.length, "club")}` + (hidden ? ` (${hidden} with fewer than ${S.f.cmin} games hidden)` : "") +
+      ". Tap a column to sort, or a club to compare it. Win % counts draws as half. Forfeits count as wins and losses but have no score, " +
+      "so they're left out of the points columns. Games between two teams from the same club are left out."));
+  out.push(leaderboard(board, shown));
+
+  const per = S.f.scale === "team";
+  out.push(el("h2", {}, "Wins v losses" + (per ? " per team" : "")),
+    el("p", { class: "sub" }, "Each dot is a club. Clubs above the 50% line win more than they lose. Tap a dot for details."),
+    el("div", { class: "filters" }, el("label", {}, "Wins and losses", seg("scale", [["total", "Totals"], ["team", "Per team"]]))));
+  out.push(scatter(shown, per));
+  return out;
+}
+// One entry per club: its teams, and its record from games against other clubs.
+// A club can't beat itself, so games between two of its own teams are left out.
+function clubStats(D, ok) {
+  const clubs = new Map();
+  const get = (name) => {
+    if (!clubs.has(name)) clubs.set(name, { club: name, teams: new Set(), rows: [], ratings: [] });
+    return clubs.get(name);
+  };
+  for (const t of D.teams) if (t.club && ok(t)) {
+    const c = get(t.club); c.teams.add(t.i);
+    const rt = D.rating.get(t.i); if (rt) c.ratings.push(rt.rating);
+  }
+  for (const r of D.tg) if (r.team.club && r.team.club !== r.opp.club && ok(r.team)) get(r.team.club).rows.push(r);
+  return [...clubs.values()].map((c) => ({ ...c, rec: record(c.rows), n: c.teams.size, rating: avg(c.ratings) }))
+    .filter((c) => c.rec.n > 0);
+}
+function toggleCmp(club) {
+  const c = S.cmp, k = c.sel.indexOf(club);
+  S.cmpMsg = "";
+  if (k >= 0) { c.sel.splice(k, 1); delete c.slot[club]; }
+  else if (c.sel.length >= MAX_CMP) S.cmpMsg = `You can compare up to ${MAX_CMP} clubs. Remove one to add another.`;
+  else {
+    const used = new Set(Object.values(c.slot));
+    let s = 1; while (used.has(s)) s++;
+    c.sel.push(club); c.slot[club] = s;
+  }
+  store.set("cmp", c); render();
+}
+function setCmp(clubs) {
+  S.cmp = { sel: clubs.slice(0, MAX_CMP), slot: Object.fromEntries(clubs.slice(0, MAX_CMP).map((c, i) => [c, i + 1])) };
+  S.cmpMsg = ""; store.set("cmp", S.cmp); render();
+}
+function clubTip(c) {
+  const row = (a, b) => el("div", { class: "r" }, el("span", {}, a), el("span", {}, b));
+  return el("div", {}, el("div", { class: "t" }, c.club),
+    row("Wins-losses-draws", `${c.rec.w}-${c.rec.l}-${c.rec.d}`), row("Win %", pct(c.rec.winPct)),
+    row("Scored per game", f1(c.rec.pf)), row("Conceded per game", f1(c.rec.pa)),
+    row("Margin per game", signed(c.rec.margin)), row("Teams", c.n));
+}
+// Scored (up) against conceded (across) per game. Picked clubs have their colour and name;
+// your club is named in the accent colour.
+function attackDefence(list) {
+  const pts = list.filter((c) => c.rec.pf != null && c.rec.pa != null);
+  if (!pts.length) return el("div", { class: "empty" }, "No scored games in this selection.");
+  // Roughly the panel's inner width (main's padding, the column gap, the panel's padding), so text keeps its size.
+  const mainW = document.getElementById("main").clientWidth || 640;
+  const W = Math.round(Math.min(640, Math.max(300, (window.innerWidth >= 900 ? (mainW - 44) * 0.535 : mainW - 32) - 26)));
+  const H = Math.round(Math.min(440, Math.max(300, W * 0.82))), m = { t: 10, r: 12, b: 40, l: 42 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const vals = pts.flatMap((c) => [c.rec.pf, c.rec.pa]);
+  const lo = Math.max(0, Math.floor((Math.min(...vals) - 2) / 5) * 5);
+  let hi = Math.ceil((Math.max(...vals) + 2) / 5) * 5;
+  if (hi - lo < 10) hi = lo + 10;
+  const step = hi - lo > 40 ? 10 : 5;
+  const X = (v) => m.l + (v - lo) / (hi - lo) * iw, Y = (v) => m.t + ih - (v - lo) / (hi - lo) * ih;
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": `Points scored against points conceded per game for ${pts.length} clubs. The club leaderboard lists every value.` });
+  for (let v = lo; v <= hi; v += step) svg.append(
+    sv("line", { x1: X(v), x2: X(v), y1: m.t, y2: m.t + ih, stroke: "var(--grid)", "stroke-width": 1 }),
+    sv("line", { x1: m.l, x2: m.l + iw, y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1 }),
+    sv("text", { x: X(v), y: m.t + ih + 16, "text-anchor": "middle" }, v),
+    sv("text", { x: m.l - 6, y: Y(v) + 4, "text-anchor": "end" }, v));
+  svg.append(
+    sv("line", { x1: X(lo), y1: Y(lo), x2: X(hi), y2: Y(hi), stroke: "var(--axis)", "stroke-width": 1.5 }),
+    sv("text", { x: m.l + 8, y: m.t + 14 }, "Outscoring opponents"),
+    sv("text", { x: m.l + iw - 8, y: m.t + ih - 8, "text-anchor": "end" }, "Being outscored"),
+    sv("text", { x: m.l + iw / 2, y: H - 4, "text-anchor": "middle", class: "lbl" }, "Points conceded per game"),
+    sv("text", { x: 12, y: m.t + ih / 2, "text-anchor": "middle", class: "lbl", transform: `rotate(-90 12 ${m.t + ih / 2})` }, "Points scored per game"));
+
+  const slot = S.cmp.slot;
+  const em = (c) => !!slot[c.club] || c.club === S.myClub;
+  const any = pts.some(em);
+  const fill = (c) => slot[c.club] ? `var(--s${slot[c.club]})` : c.club === S.myClub || !any ? "var(--accent)" : "var(--other)";
+  const maxGp = Math.max(...pts.map((c) => c.rec.n));
+  const P = pts.map((c) => ({ c, x: X(c.rec.pa), y: Y(c.rec.pf), r: 4 + 4 * Math.sqrt(c.rec.n / maxGp), em: em(c) }));
+  for (const p of [...P].sort((a, b) => a.em - b.em))
+    svg.append(sv("circle", { cx: p.x, cy: p.y, r: p.r + (p.em ? 1 : 0), fill: fill(p.c),
+      stroke: p.em ? "var(--ink)" : "var(--card)", "stroke-width": p.em ? 1.5 : 2 }));
+  const named = P.filter((p) => p.em);
+  if (named.length <= 8) placeLabels(svg, named.map((p) => ({ x: p.x, y: p.y, r: p.r, text: p.c.club })), W, H);
+  const ring = sv("circle", { r: 10, fill: "none", stroke: "var(--ink)", "stroke-width": 2, style: "display:none;pointer-events:none" });
+  const over = sv("rect", { x: 0, y: 0, width: W, height: H, fill: "transparent" });
+  svg.append(ring, over);
+  const nearest = (e) => {
+    const b = svg.getBoundingClientRect(), k = W / b.width, px = (e.clientX - b.left) * k, py = (e.clientY - b.top) * k;
+    let best = null, bd = Infinity;
+    for (const p of P) { const d = Math.hypot(p.x - px, p.y - py); if (d < bd) { bd = d; best = p; } }
+    return bd <= 24 ? best : null;
+  };
+  const leave = () => { ring.style.display = "none"; over.style.cursor = ""; hideTip(); };
+  over.addEventListener("pointermove", (e) => {
+    const p = nearest(e);
+    if (!p) return leave();
+    ring.setAttribute("cx", p.x); ring.setAttribute("cy", p.y); ring.style.display = ""; over.style.cursor = "pointer";
+    showTip(clubTip(p.c), e.clientX, e.clientY);
+  });
+  over.addEventListener("pointerleave", leave);
+  over.addEventListener("click", (e) => { const p = nearest(e); if (p) toggleCmp(p.c.club); });
+  return el("div", {}, svg);
+}
+// Name dots ({x, y, r, text}), each at the first spot beside it that stays in the chart and
+// clear of the other names, the named dots and any `avoid` boxes (e.g. guide-line labels).
+function placeLabels(svg, items, W, H, avoid = []) {
+  const boxes = avoid.concat(items.map((p) => ({ x: p.x - p.r - 2, y: p.y - p.r - 2, w: 2 * p.r + 4, h: 2 * p.r + 4 })));
+  const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  for (const p of [...items].sort((a, b) => a.y - b.y)) {
+    const w = p.text.length * 6.6 + 2, h = 14, off = p.r + 6;
+    const spots = [[p.x + off, p.y], [p.x + off, p.y - h], [p.x + off, p.y + h], [p.x - off - w, p.y], [p.x - off - w, p.y - h],
+      [p.x - off - w, p.y + h], [p.x - w / 2, p.y - p.r - h / 2 - 4], [p.x - w / 2, p.y + p.r + h / 2 + 4]]
+      .map(([x0, yc]) => ({ x: x0, y: yc - h / 2, w, h }));
+    const box = spots.find((b) => b.x >= 0 && b.x + w <= W && b.y >= 0 && b.y + h <= H && !boxes.some((o) => hit(b, o))) || spots[0];
+    boxes.push(box);
+    svg.append(sv("text", { x: box.x, y: box.y + h / 2 + 4, class: "dlabel" }, p.text));
+  }
+}
+// The picked clubs side by side. Each column's bars share one scale, so lengths compare.
+function comparePanel(list, board) {
+  const by = new Map(list.map((c) => [c.club, c])), sel = S.cmp.sel;
+  const panel = el("div", { class: "panel" }, el("div", { class: "ph" },
+    el("div", {}, el("h2", {}, "Compare clubs"), el("p", { class: "sub" }, sel.length
+      ? `${sel.length} of ${MAX_CMP} picked. Each column's bars share one scale, so their lengths compare.`
+      : `Pick up to ${MAX_CMP} clubs from the chart or the leaderboard.`)),
+    sel.length ? el("button", { type: "button", class: "btn", onclick: () => setCmp([]) }, "Clear") : null));
+  if (!sel.length) {
+    const top = board.slice(0, 4).map((c) => c.club);
+    panel.append(el("div", { class: "empty" },
+      el("p", {}, "Nothing picked yet. Tap dots in the chart or clubs in the leaderboard to line their results up here."),
+      top.length ? el("button", { type: "button", class: "btn", onclick: () => setCmp(top) }, `Compare the top ${top.length} in the leaderboard`) : null));
+  } else {
+    const picked = sel.map((name) => by.get(name)).filter(Boolean);
+    const maxPts = Math.max(1, ...picked.flatMap((c) => [c.rec.pf || 0, c.rec.pa || 0]));
+    const maxM = Math.max(1, ...picked.map((c) => Math.abs(c.rec.margin || 0)));
+    const grid = el("div", { class: "cmp", role: "table", "aria-label": "Picked clubs compared" });
+    for (const t of ["Club", "Win %", "Scored/g", "Conceded/g", "Margin/g"])
+      grid.append(el("div", { class: t === "Club" ? "h club" : "h", role: "columnheader" }, t));
+    const cell = (style, text, frac, ctr) => el("div", { class: "c", role: "cell", style }, el("div", { class: "mv" }, text),
+      frac == null ? null : el("span", { class: "mbar" + (ctr ? " ctr" : "") },
+        el("i", { class: ctr ? (frac >= 0 ? "pos" : "neg") : null, style: `width:${ctr ? Math.abs(frac) * 50 : Math.max(0, Math.min(1, frac)) * 100}%` })));
+    for (const name of sel) {
+      const c = by.get(name), style = `--c:var(--s${S.cmp.slot[name]})`;
+      grid.append(el("div", { class: "c name", role: "cell", style }, el("span", { class: "sw" }),
+        el("div", {}, el("b", {}, name), el("small", {}, c ? `${wl(c.rec)} · ${plural(c.rec.n, "game")}` : "No games in this selection")),
+        el("button", { type: "button", class: "x", title: "Remove", "aria-label": `Remove ${name} from the comparison`, onclick: () => toggleCmp(name) }, "×")));
+      if (!c) { for (let i = 0; i < 4; i++) grid.append(cell(style, "–", null)); continue; }
+      grid.append(cell(style, pct(c.rec.winPct), c.rec.winPct / 100),
+        cell(style, f1(c.rec.pf), c.rec.pf == null ? null : c.rec.pf / maxPts),
+        cell(style, f1(c.rec.pa), c.rec.pa == null ? null : c.rec.pa / maxPts),
+        cell(style, signed(c.rec.margin), c.rec.margin == null ? null : c.rec.margin / maxM, true));
+    }
+    panel.append(el("div", { class: "cmpwrap" }, grid));
+  }
+  if (S.cmpMsg) panel.append(el("p", { class: "note", role: "status" }, S.cmpMsg));
+  return panel;
+}
+// "wide" columns are hidden on a phone, leaving club, games, win % and margin.
+const CLUB_COLS = [
+  { k: "club", h: "Club", text: 1, cls: "club", v: (c) => c.club.toLowerCase() },
+  { k: "n", h: "Teams", wide: 1, v: (c) => c.n },
+  { k: "gp", h: "GP", t: "Games played", v: (c) => c.rec.n },
+  { k: "w", h: "W", t: "Wins", wide: 1, v: (c) => c.rec.w },
+  { k: "d", h: "D", t: "Draws", wide: 1, v: (c) => c.rec.d },
+  { k: "l", h: "L", t: "Losses", wide: 1, v: (c) => c.rec.l },
+  { k: "win", h: "Win %", t: "Wins plus half the draws, out of games played", v: (c) => c.rec.winPct },
+  { k: "pf", h: "PF/g", t: "Points scored per game", wide: 1, v: (c) => c.rec.pf },
+  { k: "pa", h: "PA/g", t: "Points conceded per game", wide: 1, v: (c) => c.rec.pa },
+  { k: "mg", h: "Margin/g", t: "Points scored minus conceded, per game", v: (c) => c.rec.margin },
+  { k: "rating", h: "Rating", t: "Average power rating of the club's teams", wide: 1, v: (c) => c.rating },
+];
+function boardSort() {
+  const s = S.f.csort;
+  return s && CLUB_COLS.some((c) => c.k === s.k) && (s.dir === 1 || s.dir === -1) ? s : { k: "win", dir: -1 };
+}
+function boardRows(list) {
+  const s = boardSort(), col = CLUB_COLS.find((c) => c.k === s.k);
+  return [...list].sort((a, b) => {
+    const x = col.v(a), y = col.v(b);
+    if (x == null || y == null) return (x == null) - (y == null) || natural(a.club, b.club);  // blanks last
+    return (x < y ? -s.dir : x > y ? s.dir : 0) || b.rec.n - a.rec.n || natural(a.club, b.club);
+  });
+}
+function leaderboard(rows, all) {
+  const s = boardSort();
+  const maxM = Math.max(1, ...all.map((c) => Math.abs(c.rec.margin || 0)));
+  const cls = (c) => [c.text ? "" : "n", c.wide ? "wide" : "", c.cls || ""].join(" ").trim() || null;
+  const bar = (text, frac, ctr) => el("div", { class: "bcell" }, el("span", {}, text), el("span", { class: "track" + (ctr ? " ctr" : "") },
+    el("i", { class: ctr ? (frac >= 0 ? "pos" : "neg") : null, style: `width:${ctr ? Math.abs(frac) * 50 : frac * 100}%` })));
+  const cells = {
+    club: (c) => el("span", { class: c.club === S.myClub ? "mine" : null }, c.club),
+    win: (c) => bar(pct(c.rec.winPct), c.rec.winPct / 100),
+    pf: (c) => f1(c.rec.pf), pa: (c) => f1(c.rec.pa), rating: (c) => signed(c.rating),
+    mg: (c) => c.rec.margin == null ? "–" : bar(signed(c.rec.margin), c.rec.margin / maxM, true),
+  };
+  const head = el("tr", {}, el("th", {}, el("span", { class: "sr" }, "Compare")), el("th", { class: "n wide" }, "#"),
+    CLUB_COLS.map((c) => {
+      const on = s.k === c.k;
+      return el("th", { class: cls(c), title: c.t, "aria-sort": on ? (s.dir > 0 ? "ascending" : "descending") : "none" },
+        el("button", { type: "button", class: "sort", onclick: () => setF("csort", { k: c.k, dir: on ? -s.dir : c.text ? 1 : -1 }) },
+          c.h, el("span", { class: "ar", "aria-hidden": "true" }, on ? (s.dir > 0 ? "▲" : "▼") : "")));
+    }));
+  const body = rows.map((c, i) => {
+    const slot = S.cmp.slot[c.club];
+    return el("tr", { class: "click" + (slot ? " picked" : c.club === S.myClub ? " hl" : ""), style: slot ? `--c:var(--s${slot})` : null,
+      onclick: () => toggleCmp(c.club) },
+      el("td", {}, el("button", { type: "button", class: "tick", role: "checkbox", "aria-checked": slot ? "true" : "false", "aria-label": `Compare ${c.club}` })),
+      el("td", { class: "n small wide" }, i + 1),
+      CLUB_COLS.map((col) => el("td", { class: cls(col) }, cells[col.k] ? cells[col.k](c) : col.v(c))));
+  });
+  return el("div", { class: "tablewrap tall" }, el("table", {}, el("caption", { class: "sr" }, "Club leaderboard"),
+    el("thead", {}, head), el("tbody", {}, body.length ? body : el("tr", {}, el("td", { colspan: CLUB_COLS.length + 2 }, "No clubs match.")))));
+}
+function scatter(list, per) {
+  const W = Math.round(Math.min(1060, Math.max(300, (document.getElementById("main").clientWidth || 640) - 50)));
+  const H = Math.round(Math.max(280, Math.min(460, W * 0.72))), L = 40, R = 12, T = 12, B = 40;
+  const pts = list.map((c) => ({ c, x: per ? c.rec.l / c.n : c.rec.l, y: per ? c.rec.w / c.n : c.rec.w }));
+  const top = Math.max(1, ...pts.map((p) => Math.max(p.x, p.y))) * 1.1;
+  const X = (v) => L + v / top * (W - L - R), Y = (v) => H - B - v / top * (H - T - B);
+  const step = niceStep(top), ticks = [];
+  for (let v = 0; v <= top + 1e-9; v += step) ticks.push(v);
+  const fmt = (v) => per ? v.toFixed(step < 0.1 ? 2 : 1) : String(Math.round(v));
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Clubs by wins and losses" });
+  for (const v of ticks) {
+    svg.append(sv("line", { x1: X(v), x2: X(v), y1: Y(0), y2: Y(top), stroke: "var(--grid)", "stroke-width": 1 }),
+      sv("line", { x1: X(0), x2: X(top), y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1 }),
+      sv("text", { x: X(v), y: H - B + 16, "text-anchor": "middle" }, fmt(v)),
+      sv("text", { x: L - 6, y: Y(v) + 4, "text-anchor": "end" }, fmt(v)));
+  }
+  const guides = [];  // where the guide-line labels sit, so club names keep clear of them
+  for (const p of [0.25, 0.5, 0.75]) {  // wins = losses * p / (1 - p)
+    const r = p / (1 - p), xe = r >= 1 ? top / r : top, ye = r >= 1 ? top : top * r;
+    const tx = X(xe * 0.93) - 4, ty = Y(ye * 0.93) - 4;
+    svg.append(sv("line", { x1: X(0), y1: Y(0), x2: X(xe), y2: Y(ye), stroke: p === 0.5 ? "var(--axis)" : "var(--grid)", "stroke-width": 1.5 }),
+      sv("text", { x: tx, y: ty, "text-anchor": "end" }, `${p * 100}% wins`));
+    guides.push({ x: tx - 58, y: ty - 12, w: 60, h: 16 });
+  }
+  svg.append(sv("text", { x: (L + W - R) / 2, y: H - 6, "text-anchor": "middle", class: "lbl" }, "Losses" + (per ? " per team" : "")),
+    sv("text", { x: 12, y: (T + H - B) / 2, "text-anchor": "middle", class: "lbl", transform: `rotate(-90 12 ${(T + H - B) / 2})` }, "Wins" + (per ? " per team" : "")));
+  const info = el("div", { class: "pick" }, "Tap a dot.");
+  const show = (p) => { const r = p.c.rec; info.textContent = `${p.c.club}: ${wl(r)} (${pct(r.winPct)} wins) from ${p.c.n} teams` + (per ? ` · ${(r.w / p.c.n).toFixed(1)} wins and ${(r.l / p.c.n).toFixed(1)} losses per team` : "") + (r.margin != null ? ` · average margin ${signed(r.margin)}` : ""); };
+  // Clubs picked to compare have their colour, your club the accent colour; both are named and drawn on top.
+  const slot = S.cmp.slot;
+  const rank = (c) => slot[c.club] ? 2 : c.club === S.myClub ? 1 : 0;
+  const colour = (c) => slot[c.club] ? `var(--s${slot[c.club]})` : c.club === S.myClub ? "var(--accent)" : "var(--other)";
+  for (const p of [...pts].sort((a, b) => rank(a.c) - rank(b.c))) {
+    const named = rank(p.c) > 0;
+    const g = sv("g", { style: "cursor:pointer" });
+    g.append(sv("circle", { cx: X(p.x), cy: Y(p.y), r: 14, fill: "transparent" }),  // bigger tap target
+      sv("circle", { cx: X(p.x), cy: Y(p.y), r: named ? 6.5 : 5, fill: colour(p.c), stroke: "var(--card)", "stroke-width": 2 }),
+      sv("title", {}, p.c.club));
+    g.addEventListener("click", () => show(p));
+    svg.append(g);
+  }
+  placeLabels(svg, pts.filter((p) => rank(p.c) > 0).map((p) => ({ x: X(p.x), y: Y(p.y), r: 6.5, text: p.c.club })), W, H, guides);
+  const mine = pts.find((p) => p.c.club === S.myClub);
+  if (mine) show(mine);
+  const keyed = pts.filter((p) => rank(p.c) > 0).map((p) => p.c.club)
+    .sort((a, b) => (slot[a] || 99) - (slot[b] || 99));
+  const legend = el("div", { class: "legend" },
+    keyed.map((club) => el("span", {}, el("span", { class: "dot", style: `background:${colour({ club })}` }), club)),
+    el("span", {}, el("span", { class: "dot", style: "background:var(--other)" }), keyed.length ? "Other clubs" : "Clubs (pick yours under Teams to highlight it)"));
+  return el("div", { class: "chart" }, legend, svg, info);
+}
+function niceStep(top) {
+  const raw = top / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
+  return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * p;
+}
+
+// ---------- shared charts --------------------------------------------------------
+const CLOSE = 10, BLOWOUT = 30;  // a close game: won by 10 or fewer; a blowout: by more than 30 (as in vjbl_common.py)
+function weekOf(iso) {  // the Friday of the week (Monday to Sunday) a date falls in, as YYYY-MM-DD
+  const [y, m, d] = iso.split("-").map(Number), dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() - (dt.getUTCDay() + 6) % 7 + 4);
+  return dt.toISOString().slice(0, 10);
+}
+const median = (xs) => {
+  if (!xs.length) return null;
+  const s = [...xs].sort((a, b) => a - b), k = s.length >> 1;
+  return s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2;
+};
+const chartWidth = () => Math.round(Math.min(1060, Math.max(300, (document.getElementById("main").clientWidth || 640) - 50)));
+// A club's colour: its comparison colour, the accent for your club, otherwise none (grey).
+const clubColour = (club) => S.cmp.slot[club] ? `var(--s${S.cmp.slot[club]})` : club && club === S.myClub ? "var(--accent)" : null;
+function tipNode(text) { return el("div", {}, text.split("\n").map((t, i) => el("div", { class: i ? null : "t" }, t))); }
+
+// Lines across xs (labels). series: [{name, colour, strong, ys: [a value or null per x], tips: [text per x]}].
+// o: {label, yLabel, ref (a reference line), reverse (low values at the top), integer, yMin, yMax,
+//     fmt (tick labels), ends (name each line at its right end), legend (default: name the strong lines), height}
+function lineChart(xs, series, o = {}) {
+  const W = chartWidth(), ends = !!o.ends && W >= 520;
+  const H = o.height || Math.round(Math.min(380, Math.max(240, W * 0.45)));
+  const m = { t: 12, r: ends ? Math.min(190, Math.round(W * 0.28)) : 28, b: 34, l: 48 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const vals = series.flatMap((s) => s.ys).filter((v) => v != null).concat(o.ref != null ? [o.ref] : []);
+  let lo = o.yMin != null ? o.yMin : Math.min(...vals), hi = o.yMax != null ? o.yMax : Math.max(...vals);
+  if (!(hi > lo)) { lo -= 1; hi += 1; }
+  const step = o.integer ? Math.max(1, Math.ceil((hi - lo) / 8)) : niceStep(hi - lo);
+  if (o.yMin == null) lo = Math.floor(lo / step) * step;
+  if (o.yMax == null) hi = Math.ceil(hi / step) * step;
+  const X = (i) => xs.length === 1 ? m.l + iw / 2 : m.l + i / (xs.length - 1) * iw;
+  const Y = (v) => o.reverse ? m.t + (v - lo) / (hi - lo) * ih : m.t + ih - (v - lo) / (hi - lo) * ih;
+  const fmt = o.fmt || ((v) => String(+v.toFixed(2)));
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": o.label || "Line chart" });
+  for (let v = lo; v <= hi + 1e-9; v += step) svg.append(
+    sv("line", { x1: m.l, x2: m.l + iw, y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1 }),
+    sv("text", { x: m.l - 6, y: Y(v) + 4, "text-anchor": "end" }, fmt(v)));
+  // Every k-th x label so they don't collide, and always the last (dropping the one before if they'd crowd).
+  const every = Math.max(1, Math.ceil(xs.length / Math.max(2, Math.floor(iw / 64)))), lastI = xs.length - 1, shown = [];
+  for (let i = 0; i <= lastI; i += every) shown.push(i);
+  if (shown[shown.length - 1] !== lastI) {
+    if (shown.length > 1 && lastI - shown[shown.length - 1] < every / 2) shown.pop();
+    shown.push(lastI);
+  }
+  for (const i of shown) svg.append(sv("text", { x: X(i), y: m.t + ih + 16,
+    "text-anchor": lastI > 0 && i === lastI && xs[i].length * 3.4 > m.r ? "end" : "middle" }, xs[i]));
+  if (o.ref != null && o.ref >= lo && o.ref <= hi)
+    svg.append(sv("line", { x1: m.l, x2: m.l + iw, y1: Y(o.ref), y2: Y(o.ref), stroke: "var(--axis)", "stroke-width": 1.5 }));
+  if (o.yLabel) svg.append(sv("text", { x: 12, y: m.t + ih / 2, "text-anchor": "middle", class: "lbl", transform: `rotate(-90 12 ${m.t + ih / 2})` }, o.yLabel));
+  const P = [];
+  for (const s of [...series].sort((a, b) => !!a.strong - !!b.strong)) {  // strong lines drawn last, on top
+    const colour = s.colour || "var(--other)";
+    let d = "";
+    s.ys.forEach((v, i) => { if (v != null) d += (d && s.ys[i - 1] != null ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); });
+    if (d) svg.append(sv("path", { d, class: "ln", stroke: colour, "stroke-width": s.strong ? 2.5 : 1.5 }));
+    s.ys.forEach((v, i) => {
+      if (v == null) return;
+      const lone = s.ys[i - 1] == null && s.ys[i + 1] == null;
+      if (s.strong || lone || xs.length <= 12)
+        svg.append(sv("circle", { cx: X(i), cy: Y(v), r: s.strong ? 3.5 : 2.5, fill: colour, stroke: "var(--card)", "stroke-width": 1 }));
+      P.push({ x: X(i), y: Y(v), tip: (s.tips && s.tips[i]) || `${s.name}\n${fmt(v)}` });
+    });
+    const k = s.ys.reduce((a, v, i) => v == null ? a : i, -1);
+    s.end = k >= 0 ? { x: X(k), y: Y(s.ys[k]) } : null;
+  }
+  if (ends) {  // names at the right end, nudged apart so they don't overlap
+    let last = -Infinity;
+    for (const s of series.filter((s) => s.end).sort((a, b) => a.end.y - b.end.y)) {
+      const y = Math.max(s.end.y + 4, last + 13); last = y;
+      svg.append(sv("text", { x: m.l + iw + 8, y, class: s.strong ? "dlabel" : null, style: s.strong ? null : "fill:var(--muted)" },
+        s.name.length > 26 ? s.name.slice(0, 25) + "…" : s.name));
+    }
+  }
+  // Hover or tap: the nearest point's details.
+  const ring = sv("circle", { r: 7, fill: "none", stroke: "var(--ink)", "stroke-width": 2, style: "display:none;pointer-events:none" });
+  const over = sv("rect", { x: 0, y: 0, width: W, height: H, fill: "transparent" });
+  svg.append(ring, over);
+  const nearest = (e) => {
+    const b = svg.getBoundingClientRect(), k = W / b.width, px = (e.clientX - b.left) * k, py = (e.clientY - b.top) * k;
+    let best = null, bd = Infinity;
+    for (const p of P) { const d = Math.hypot(p.x - px, (p.y - py) * 1.5); if (d < bd) { bd = d; best = p; } }
+    return bd <= 40 ? best : null;
+  };
+  const leave = () => { ring.style.display = "none"; hideTip(); };
+  const hover = (e) => {
+    const p = nearest(e);
+    if (!p) return leave();
+    ring.setAttribute("cx", p.x); ring.setAttribute("cy", p.y); ring.style.display = "";
+    showTip(tipNode(p.tip), e.clientX, e.clientY);
+  };
+  over.addEventListener("pointermove", hover); over.addEventListener("click", hover); over.addEventListener("pointerleave", leave);
+  const keyed = o.legend === false ? [] : series.filter((s) => s.strong);
+  return el("div", { class: "chart" }, keyed.length ? el("div", { class: "legend" },
+    keyed.map((s) => el("span", {}, el("span", { class: "dot", style: `background:${s.colour}` }), s.name))) : null, svg);
+}
+
+// 100% stacked bars. keys: [{name, colour}]; rows: [{label, sub, parts: [counts per key], value (text at
+// the right), tip, onclick, hl}].
+function stackBars(keys, rows) {
+  return el("div", { class: "stacks" },
+    el("div", { class: "skeys" }, keys.map((k) => el("span", {}, el("span", { class: "dot", style: `background:${k.colour}` }), k.name))),
+    rows.map((r) => {
+      const tot = r.parts.reduce((a, b) => a + b, 0) || 1;
+      return el("div", { class: "srow" + (r.onclick ? " click" : "") + (r.hl ? " hl" : ""), title: r.tip || null, onclick: r.onclick || null },
+        el("div", { class: "sl" }, r.label, r.sub ? el("small", {}, r.sub) : null),
+        el("div", { class: "sbar" }, r.parts.map((v, i) => v > 0 ? el("i", { style: `width:${v / tot * 100}%;background:${keys[i].colour}` }) : null)),
+        el("div", { class: "sv" }, r.value || ""));
+    }));
+}
+const share = (parts) => { const t = parts.reduce((a, b) => a + b, 0) || 1; return parts.map((v) => v / t * 100); };
+
+// Heatmap cell colour for t in -1..1: orange below the middle, blue above, stronger further out.
+function heat(t) {
+  if (t == null || isNaN(t)) return null;
+  t = Math.max(-1, Math.min(1, t));
+  const a = (0.1 + 0.55 * Math.abs(t)).toFixed(2);
+  return t >= 0 ? `rgba(57,135,229,${a})` : `rgba(235,104,52,${a})`;
+}
+const RAMP2 = "linear-gradient(90deg, rgba(235,104,52,.65), rgba(235,104,52,.1) 48%, rgba(57,135,229,.1) 52%, rgba(57,135,229,.65))";
+const RAMP1 = "linear-gradient(90deg, rgba(57,135,229,.1), rgba(57,135,229,.65))";
+
+// Clubs picked to compare, each removable, for the views that draw them.
+function pickedLine() {
+  if (!S.cmp.sel.length) return null;
+  return el("div", { class: "legend" }, el("span", {}, "Comparing:"),
+    S.cmp.sel.map((c) => el("span", {}, el("span", { class: "dot", style: `background:var(--s${S.cmp.slot[c]})` }), c,
+      el("button", { type: "button", class: "x", "aria-label": `Stop comparing ${c}`, onclick: () => toggleCmp(c) }, "×"))),
+    el("button", { type: "button", class: "btn", onclick: () => setCmp([]) }, "Clear"));
+}
+function pickFirst(list) {
+  const top = boardRows(list).slice(0, 4).map((c) => c.club);
+  return el("div", { class: "empty" },
+    el("p", {}, "Pick clubs to compare: tap dots or clubs on the Overview, or clubs in the table below. Or start with the top 4 in the leaderboard."),
+    top.length ? el("button", { type: "button", class: "btn", onclick: () => setCmp(top) }, `Compare the top ${top.length}`) : null);
+}
+
+// Club v age group: win %, average rating or number of teams, one cell per club and age group.
+function clubAges(D, ok, list) {
+  const metric = S.f.hmetric;
+  const out = [el("p", { class: "sub" }, "Where each club is strong: every club in every age group, from its teams' games against other clubs. " +
+    "Tap a club to compare it. Faint figures come from fewer than 3 games.")];
+  out.push(el("div", { class: "filters" }, el("label", {}, "Show", seg("hmetric", [["win", "Win %"], ["rating", "Rating"], ["teams", "Teams"]]))));
+  const cells = new Map(), key = (c, a, g) => `${c}|${a}|${g}`;
+  const get = (k) => { if (!cells.has(k)) cells.set(k, { rows: [], teams: 0, ratings: [] }); return cells.get(k); };
+  for (const t of D.teams) if (t.club && ok(t)) {
+    const c = get(key(t.club, t.age, t.gender)); c.teams++;
+    const rt = D.rating.get(t.i); if (rt) c.ratings.push(rt.rating);
+  }
+  for (const r of D.tg) if (r.team.club && r.team.club !== r.opp.club && ok(r.team)) get(key(r.team.club, r.team.age, r.team.gender)).rows.push(r);
+  const clubs = boardRows(list.filter((c) => c.rec.n >= S.f.cmin));
+  const cols = [];
+  for (const a of D.ages) for (const g of D.genders)
+    if (clubs.some((c) => cells.has(key(c.club, a, g)))) cols.push([a, g]);
+  const maxTeams = Math.max(1, ...[...cells.values()].map((c) => c.teams));
+  const value = (c) => metric === "teams" ? c.teams || null : metric === "rating" ? avg(c.ratings) : c.rows.length ? record(c.rows).winPct : null;
+  const tone = (v) => v == null ? null : heat(metric === "win" ? (v - 50) / 40 : metric === "rating" ? v / 8 : v / maxTeams);
+  const show = (v) => v == null ? "" : metric === "win" ? pct(v) : metric === "rating" ? signed(v) : String(v);
+  const ends = { win: ["under 50%", "over 50%"], rating: ["below average", "above average"], teams: ["fewer", "more"] }[metric];
+  out.push(el("p", { class: "small" }, ends[0], el("span", { class: "ramp", style: `background:${metric === "teams" ? RAMP1 : RAMP2}` }), ends[1],
+    metric === "rating" ? " · rating = points better than an average team in the age group (Rankings)" : ""));
+  out.push(pickedLine());
+  const head = el("tr", {}, el("th", { class: "c", style: "text-align:left" }, "Club"),
+    cols.map(([a, g]) => el("th", {}, a, el("br"), g)));
+  const body = clubs.map((cl) => {
+    const dot = clubColour(cl.club);
+    return el("tr", { class: "click", onclick: () => toggleCmp(cl.club) },
+      el("td", { class: "c" + (cl.club === S.myClub ? " mine" : ""), title: cl.club },
+        dot ? el("span", { class: "dot", style: `background:${dot}` }) : null, cl.club),
+      cols.map(([a, g]) => {
+        const c = cells.get(key(cl.club, a, g));
+        if (!c) return el("td", { class: "hc faint" }, "");
+        const v = value(c), faint = c.rows.length < 3 && metric !== "teams";
+        const r = record(c.rows);
+        return el("td", { class: "hc" + (faint ? " faint" : ""), style: !faint && tone(v) ? `background:${tone(v)}` : null,
+          title: `${cl.club} · ${a} ${g}\n${plural(c.teams, "team")} · ${r.n ? `${wl(r)} (${pct(r.winPct)} wins) from ${plural(r.n, "game")}` : "no results yet"}` +
+            (c.ratings.length ? ` · average rating ${signed(avg(c.ratings))}` : "") }, show(v));
+      }));
+  });
+  out.push(el("div", { class: "tablewrap tall hm" }, el("table", {}, el("thead", {}, head), el("tbody", {}, body))));
+  return out;
+}
+
+// The picked clubs week by week: average margin (or win %) across all their teams' games against other clubs.
+function clubForm(D, ok, list) {
+  const metric = S.f.fmetric;
+  const out = [el("p", { class: "sub" }, "Week by week, each picked club's average margin (or win %) across all its teams' games against other clubs. " +
+    "Above the line, it won more than it lost that week.")];
+  out.push(el("div", { class: "filters" }, el("label", {}, "Show", seg("fmetric", [["margin", "Average margin"], ["win", "Win %"]]))));
+  if (!S.cmp.sel.length) return out.concat(pickFirst(list));
+  out.push(pickedLine());
+  const rows = D.tg.filter((r) => r.g.date && r.team.club && r.team.club !== r.opp.club && ok(r.team));
+  const weeks = uniq(rows.map((r) => weekOf(r.g.date))).sort();
+  if (!weeks.length) return out.concat(el("p", { class: "note" }, "No results yet in this selection."));
+  const by = new Map();
+  for (const r of rows) if (S.cmp.slot[r.team.club]) {
+    const k = r.team.club + "|" + weekOf(r.g.date);
+    if (!by.has(k)) by.set(k, []);
+    by.get(k).push(r);
+  }
+  const series = S.cmp.sel.map((club) => {
+    const recs = weeks.map((w) => by.has(club + "|" + w) ? record(by.get(club + "|" + w)) : null);
+    return { name: club, colour: clubColour(club), strong: true,
+      ys: recs.map((r) => r ? (metric === "win" ? r.winPct : r.margin) : null),
+      tips: recs.map((r, i) => r && `${club}\nWeek of ${fmtDate(weeks[i], false)}\n${wl(r)} from ${plural(r.n, "game")} (${pct(r.winPct)} wins)\nAverage margin ${signed(r.margin)}`) };
+  });
+  if (weeks.length < 3) out.push(el("div", { class: "info" }, `Only ${plural(weeks.length, "week")} of results so far in this selection; the lines fill in as the season goes.`));
+  out.push(lineChart(weeks.map((w) => fmtDate(w, false).slice(4)), series, {
+    label: "Picked clubs' form week by week", ref: metric === "win" ? 50 : 0, legend: false,
+    yLabel: metric === "win" ? "Win %" : "Average margin", fmt: metric === "win" ? (v) => v + "%" : (v) => signed(v, 0) }));
+  return out;
+}
+
+// Every archived season, per club: win %, teams entered, or the average division of its teams.
+function clubSeasons(D, list) {
+  const metric = S.f.smetric;
+  const out = [el("p", { class: "sub" }, "Each club across every archived season, for the age group and gender chosen above. Tap a club to compare it.")];
+  if (S.trend === undefined) {
+    S.trend = null;
+    loadJSON("data/trend.json").then((t) => { S.trend = t; render(); }, () => { S.trend = false; render(); });
+  }
+  if (S.trend === null) return out.concat(el("p", { class: "note" }, "Loading every season…"));
+  if (S.trend === false) return out.concat(el("p", { class: "note" }, "Couldn't load the other seasons."));
+  out.push(el("div", { class: "filters" }, el("label", {}, "Show", seg("smetric", [["win", "Win %"], ["teams", "Teams"], ["level", "Division"]]))));
+  if (metric === "level") out.push(el("p", { class: "small" }, "Division: the average level of the club's teams in the season grades, " +
+    "1 = VC Championship, 2 = VC Reserve, 3 = VJL1, 4 = VJL2 and so on, so lower is stronger. A season still in grading has none yet."));
+  if (metric === "win") out.push(el("p", { class: "small" }, "In a graded season most teams end up in a division where they win about half " +
+    "their games, so win % says more about grading than strength; Division shows strength."));
+  const T = S.trend, sums = new Map();
+  for (const [si, ci, age, gender, teams, w, l, d, , , , ls, ln] of T.rows) {
+    if ((S.f.age && age !== S.f.age) || (S.f.gender && gender !== S.f.gender)) continue;
+    const club = T.clubs[ci];
+    if (!sums.has(club)) sums.set(club, T.seasons.map(() => ({ teams: 0, w: 0, l: 0, d: 0, ls: 0, ln: 0 })));
+    const s = sums.get(club)[si];
+    s.teams += teams; s.w += w; s.l += l; s.d += d; s.ls += ls; s.ln += ln;
+  }
+  const value = (s) => metric === "teams" ? s.teams || null : metric === "level" ? (s.ln ? s.ls / s.ln : null)
+    : s.w + s.l + s.d ? (s.w + s.d / 2) / (s.w + s.l + s.d) * 100 : null;
+  const fmtV = (v) => v == null ? "–" : metric === "win" ? pct(v) : metric === "level" ? v.toFixed(1) : String(v);
+  const labels = T.seasons.map((s) => (s.label.match(/\((.*)\)/) || [, s.label])[1]);
+  const picked = S.cmp.sel.filter((c) => sums.has(c));
+  if (!picked.length) out.push(pickFirst(list));
+  else {
+    out.push(pickedLine());
+    out.push(lineChart(labels, picked.map((club) => ({ name: club, colour: clubColour(club), strong: true,
+      ys: sums.get(club).map(value),
+      tips: sums.get(club).map((s, i) => `${club} · ${T.seasons[i].label}\n${plural(s.teams, "team")}` +
+        (s.w + s.l + s.d ? ` · ${s.w}-${s.l}${s.d ? "-" + s.d : ""} (${pct((s.w + s.d / 2) / (s.w + s.l + s.d) * 100)} wins)` : "") +
+        (s.ln ? `\nAverage division ${(s.ls / s.ln).toFixed(1)}` : "")) })), {
+      label: "Picked clubs season by season", legend: false, reverse: metric === "level", ref: metric === "win" ? 50 : null,
+      yMin: metric === "level" ? 1 : metric === "teams" ? 0 : null, integer: metric === "teams",
+      yLabel: { win: "Win %", teams: "Teams", level: "Average division" }[metric], fmt: metric === "win" ? (v) => v + "%" : (v) => String(+v.toFixed(1)) }));
+  }
+  const latest = (vals) => { for (let i = vals.length - 1; i >= 0; i--) if (vals[i] != null) return vals[i]; return null; };
+  const rows = [...sums.entries()].map(([club, ss]) => ({ club, vals: ss.map(value) }))
+    .filter((r) => r.vals.some((v) => v != null))
+    .sort((a, b) => { const x = latest(a.vals), y = latest(b.vals); return (metric === "level" ? x - y : y - x) || natural(a.club, b.club); });
+  out.push(el("h2", {}, "Every club"));
+  out.push(table([
+    { h: "Club", v: (r) => el("span", {}, clubColour(r.club) ? el("span", { class: "dot", style: `background:${clubColour(r.club)}` }) : null, r.club) },
+    ...labels.map((lab, i) => ({ h: lab, n: 1, v: (r) => fmtV(r.vals[i]) })),
+  ], rows, { rowClass: (r) => S.cmp.slot[r.club] ? "picked" : r.club === S.myClub ? "hl" : "", onRow: (r) => toggleCmp(r.club) }));
+  return out;
+}
+
+// ---------- Grading -----------------------------------------------------------
+// How close the games are: grading should put teams with teams of their own standard.
+const marginOf = (g) => Math.abs(g.hs - g.as);
+const closeness = (gs) => {  // [close, in between, blowouts]
+  let c = 0, b = 0;
+  for (const g of gs) { const x = marginOf(g); if (x <= CLOSE) c++; else if (x > BLOWOUT) b++; }
+  return [c, gs.length - c - b, b];
+};
+const CLOSE_KEYS = [{ name: `Close (${CLOSE} or fewer)`, colour: "var(--s1)" }, { name: "In between", colour: "var(--other)" },
+  { name: `Blowout (more than ${BLOWOUT})`, colour: "var(--s2)" }];
+function viewGrading(D) {
+  const out = [el("h1", {}, "Grading check"), el("p", { class: "sub" }, "How close the games are. Grading tries to put every team with " +
+    `teams of its own standard, so most games should be close. Close: won by ${CLOSE} points or fewer; blowout: by more than ${BLOWOUT}. ` +
+    "Forfeits aren't counted.")];
+  const phases = uniq(D.grades.map((g) => g.phase)).sort(natural);
+  out.push(el("div", { class: "filters" }, sel("Age", "age", D.ages), sel("Gender", "gender", D.genders), sel("Competition", "gphase", phases)));
+  const scored = D.games.filter((g) => g.st === "F" && !g.forfeit && g.hs != null && g.as != null && (!S.f.gphase || g.grade.phase === S.f.gphase));
+  const ok = (g) => (!S.f.age || g.grade.age === S.f.age) && (!S.f.gender || g.grade.gender === S.f.gender);
+  const games = scored.filter(ok);
+  if (!games.length) return out.concat(el("p", { class: "note" }, "No scored games in this selection yet."));
+  const [c, , b] = closeness(games), n = games.length;
+  out.push(tiles([["Scored games", n.toLocaleString()], ["Close games", pct(c / n * 100), `won by ${CLOSE} or fewer`],
+    ["Blowouts", pct(b / n * 100), `won by more than ${BLOWOUT}`], ["Median margin", String(median(games.map(marginOf))), "points"]]));
+
+  out.push(el("h2", {}, "By age group"), el("p", { class: "sub" }, "Every age group, for the competition chosen. Tap one to look at it."));
+  const ageRows = [];
+  for (const a of D.ages) for (const gd of D.genders) {
+    const gs = scored.filter((g) => g.grade.age === a && g.grade.gender === gd);
+    if (!gs.length) continue;
+    const parts = closeness(gs), sh = share(parts);
+    ageRows.push({ label: `${a} ${gd}`, sub: plural(gs.length, "game"), parts, value: `${pct(sh[2])} blowouts`,
+      tip: `${a} ${gd}: ${pct(sh[0])} close, ${pct(sh[1])} in between, ${pct(sh[2])} blowouts`,
+      hl: a === S.f.age && gd === S.f.gender, onclick: () => { S.f.gender = gd; setF("age", a); } });
+  }
+  out.push(stackBars(CLOSE_KEYS, ageRows));
+
+  const weeks = uniq(games.filter((g) => g.date).map((g) => weekOf(g.date))).sort();
+  if (weeks.length > 1) {
+    out.push(el("h2", {}, "Week by week"), el("p", { class: "sub" }, "If grading is working, blowouts get rarer as teams move to pools of their own standard."));
+    out.push(stackBars(CLOSE_KEYS, weeks.map((w) => {
+      const gs = games.filter((g) => g.date && weekOf(g.date) === w), parts = closeness(gs), sh = share(parts);
+      return { label: `Week of ${fmtDate(w, false)}`, sub: plural(gs.length, "game"), parts, value: `${pct(sh[2])} blowouts`,
+        tip: `${pct(sh[0])} close, ${pct(sh[1])} in between, ${pct(sh[2])} blowouts` };
+    })));
+  }
+
+  out.push(el("h2", {}, "How big the margins are"), el("p", { class: "sub" }, "Games by the points between the teams."));
+  out.push(histogram(games.map(marginOf)));
+
+  const byGrade = new Map();
+  for (const g of games) { if (!byGrade.has(g.grade)) byGrade.set(g.grade, []); byGrade.get(g.grade).push(g); }
+  const rows = [...byGrade.entries()].map(([gr, gs]) => {
+    const [cc, , bb] = closeness(gs), ms = gs.map(marginOf);
+    return { gr, n: gs.length, nb: bb, med: median(ms), close: cc / gs.length * 100, blow: bb / gs.length * 100, max: Math.max(...ms) };
+  }).sort((a, b) => b.nb - a.nb || b.blow - a.blow || natural(a.gr.name, b.gr.name));
+  out.push(el("h2", {}, "Grades with the most blowouts"), el("p", { class: "sub" }, "Tap a grade to open its ladder."));
+  const shown = rows.slice(0, S.limit);
+  out.push(table([
+    { h: "Grade", v: (r) => r.gr.name }, { h: "Games", n: 1, v: (r) => r.n }, { h: "Median", n: 1, wide: 1, v: (r) => r.med },
+    { h: "Close", n: 1, wide: 1, v: (r) => pct(r.close) },
+    { h: "Blowouts", n: 1, v: (r) => el("div", { class: "bcell" }, el("span", {}, pct(r.blow)),
+      el("span", { class: "track" }, el("i", { style: `width:${r.blow}%;background:var(--s2)` }))) },
+    { h: "Biggest", n: 1, wide: 1, v: (r) => r.max },
+  ], shown, { onRow: (r) => {
+    Object.assign(S.f, { age: r.gr.age, gender: r.gr.gender, phase: r.gr.phase, grade: r.gr.name });
+    store.set("filters", S.f); location.hash = "ladders";
+  } }));
+  out.push(more(rows.length, shown.length));
+  return out;
+}
+// Games by margin: 0–5, 6–10, ... 46–50, 51+, coloured close / in between / blowout.
+function histogram(values) {
+  const bins = [];
+  for (let k = 0; k < 10; k++) bins.push({ lo: k ? 5 * k + 1 : 0, hi: 5 * k + 5, n: 0 });
+  bins.push({ lo: 51, hi: null, n: 0 });
+  for (const v of values) bins[Math.min(10, v <= 5 ? 0 : Math.ceil(v / 5) - 1)].n++;
+  const W = chartWidth(), H = 240, m = { t: 12, r: 12, b: 36, l: 44 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const top = Math.max(1, ...bins.map((b) => b.n)), step = niceStep(top), ymax = Math.ceil(top / step) * step;
+  const Y = (v) => m.t + ih - v / ymax * ih, bw = iw / bins.length;
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Games by winning margin" });
+  for (let v = 0; v <= ymax + 1e-9; v += step) svg.append(
+    sv("line", { x1: m.l, x2: m.l + iw, y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1 }),
+    sv("text", { x: m.l - 6, y: Y(v) + 4, "text-anchor": "end" }, v.toLocaleString()));
+  bins.forEach((b, i) => {
+    const colour = b.hi != null && b.hi <= CLOSE ? "var(--s1)" : b.lo > BLOWOUT ? "var(--s2)" : "var(--other)";
+    const label = b.hi == null ? `${b.lo}+` : `${b.lo}–${b.hi}`;
+    svg.append(sv("rect", { x: m.l + i * bw + bw * 0.1, y: Y(b.n), width: bw * 0.8, height: Math.max(0, Y(0) - Y(b.n)), rx: 3, fill: colour },
+      sv("title", {}, `Won by ${label}: ${plural(b.n, "game")} (${pct(b.n / values.length * 100)})`)));
+    if (bw >= 36 || i % 2 === 0) svg.append(sv("text", { x: m.l + i * bw + bw / 2, y: m.t + ih + 16, "text-anchor": "middle" }, label));
+  });
+  svg.append(sv("text", { x: m.l + iw / 2, y: H - 2, "text-anchor": "middle", class: "lbl" }, "Points between the teams"));
+  return el("div", { class: "chart" }, el("div", { class: "legend" }, CLOSE_KEYS.map((k) => el("span", {}, el("span", { class: "dot", style: `background:${k.colour}` }), k.name))), svg);
+}
+
+// ---------- Players -----------------------------------------------------------
+function playerCell(name, num, team) {
+  return el("div", {}, el("div", {}, name + (num ? ` #${num}` : "")), el("div", { class: "small" }, teamLink(team)));
+}
+const SORTS = { ppg: ["Points per game", (p) => p.ppg], pts: ["Total points", (p) => p.pts],
+  three: ["3-pointers", (p) => p.three], ft: ["Free throws", (p) => p.ft], fpg: ["Fouls per game", (p) => p.fpg] };
+function viewPlayers(D) {
+  if (!D.players.length && D.scoring.length) return viewScoring(D);
+  const out = [el("h1", {}, "Players")];
+  if (!D.players.length) return out.concat(el("p", { class: "note" }, "Player stats aren't published for this season yet."));
+  out.push(el("p", { class: "sub" }, "From PlayHQ's box scores: points, free throws (FT), 2- and 3-pointers made (2P, 3P) and fouls (F)."));
+  out.push(el("div", { class: "filters" }, sel("Age", "age", D.ages), sel("Gender", "gender", D.genders), sel("Club", "club", D.clubs),
+    sel("Rank by", "sort", Object.entries(SORTS).map(([k, [t]]) => [k, t]), { all: null }),
+    el("label", {}, "Minimum games", el("input", { type: "number", min: 1, max: 50, value: S.f.min, onchange: (e) => setF("min", Math.max(1, +e.target.value || 1)) })),
+    search("Name contains", "pq", "Player name")));
+  const q = S.f.pq.toLowerCase(), key = SORTS[S.f.sort][1];
+  const rows = D.players.filter((p) => ageGenderFilter()(p.team) && (!S.f.club || p.team.club === S.f.club) && p.games >= S.f.min && (!q || p.name.toLowerCase().includes(q)))
+    .sort((a, b) => key(b) - key(a) || b.pts - a.pts);
+  rows.forEach((p, i) => p.rank = i + 1);
+  const shown = rows.slice(0, S.limit);
+  out.push(table([
+    { h: "#", n: 1, v: (p) => p.rank }, { h: "Player", v: (p) => playerCell(p.name, p.num, p.team) },
+    { h: "G", n: 1, v: (p) => p.games }, { h: "Pts", n: 1, v: (p) => p.pts },
+    { h: "PPG", n: 1, v: (p) => p.ppg.toFixed(1) }, { h: "FT", n: 1, wide: 1, v: (p) => p.ft }, { h: "2P", n: 1, wide: 1, v: (p) => p.two },
+    { h: "3P", n: 1, v: (p) => p.three }, { h: "F", n: 1, v: (p) => p.fouls },
+  ], shown, { rowClass: (p) => isMine(p.team) ? "hl" : "" }));
+  out.push(more(rows.length, shown.length));
+  const pool = D.players.filter((p) => ageGenderFilter()(p.team) && (!S.f.club || p.team.club === S.f.club));
+  out.push(el("h2", {}, "Where the points come from"), el("p", { class: "sub" },
+    (S.f.club ? `${S.f.club}'s` : "All") + " points by age group: free throws, 2-pointers and 3-pointers."));
+  out.push(pointsMix(pool));
+  out.push(el("h2", {}, "Scoring spread"), el("p", { class: "sub" }, "How much of each team's scoring comes from its top scorers. " +
+    "A long first bar means the team leans on one player." + (S.f.club ? "" : " Showing the 25 teams that lean most on one scorer; pick a club to see all of its teams.") +
+    " Teams whose box scores list fewer than 3 scorers are left out (usually a scoresheet entered without its scorers)."));
+  out.push(scoringSpread(pool));
+  const best = D.best.filter((b) => ageGenderFilter()(b.team) && (!S.f.club || b.team.club === S.f.club)).slice(0, 15);
+  if (best.length) {
+    out.push(el("h2", {}, "Highest-scoring games"));
+    out.push(table([
+      { h: "Pts", n: 1, v: (b) => b.pts }, { h: "Player", v: (b) => playerCell(b.name, "", b.team) },
+      { h: "Opponent", wide: 1, v: (b) => b.opp ? b.opp.name : "" }, { h: "Date", wide: 1, v: (b) => fmtDate(b.date, false) },
+      { h: "", v: (b) => b.grade.base ? el("a", { href: b.grade.base + b.id, target: "_blank", rel: "noopener" }, "PlayHQ ↗") : "" },
+    ], best));
+  }
+  return out;
+}
+
+// ---------- League odds: each team's chance of each league, from the grading map ----
+const ODDS_COLS = ["VJCL", "VJL1", "VJL2", "VJL3", "VJL4"];
+const oddsText = (p) => p === 0 ? "0" : p < 1 ? p.toFixed(1) : p > 99 && p < 100 ? p.toFixed(1) : String(Math.round(p));
+const oddsCell = (p) => el("span", { class: "odds" + (p === 0 ? " zero" : ""), style: `--p:${Math.min(100, p)}` }, oddsText(p));
+function viewOdds(D) {
+  const O = D.odds, out = [el("h1", {}, "League odds")];
+  if (!O) return out.concat(el("p", { class: "note" }, "League odds are worked out during grading, for age groups whose grading map is written in (Under 14 Boys so far)."));
+  out.push(el("p", { class: "sub" }, `${O.age} ${O.gender}: each team's chance of each league, from ${O.sims.toLocaleString()} playings-out of Basketball Victoria's grading map, starting from the ${O.played} grading results so far (${O.rounds.join(", ")})` +
+    (O.to_play ? `, with ${O.to_play} Phase One games still to play.` : ".")));
+  if (O.stale) out.push(el("p", { class: "note" }, "Crossover or Phase Two games have been played. These odds don't read those yet, so they only reflect Phase One."));
+  const pools = [...new Set(O.rows.map((r) => r.pnum))].sort((a, b) => a - b);
+  out.push(el("div", { class: "filters" },
+    sel("Pools", "opool", [["1-6", "Pools 1 to 6"], ["all", "All pools"], ...pools.map((p) => [String(p), `Pool ${p}`])], { all: null }),
+    sel("Club", "club", D.clubs), search("Team name contains", "pq", "Team name")));
+  const q = (S.f.pq || "").toLowerCase(), pick = S.f.opool;
+  const rows = O.rows.filter((r) => (pick === "all" || (pick === "1-6" ? r.pnum <= 6 : r.pnum === +pick))
+    && (!S.f.club || r.team.club === S.f.club) && (!q || r.team.name.toLowerCase().includes(q)));
+  out.push(rows.length ? table([
+    { h: "Pool", v: (r) => r.pool }, { h: "Team", v: (r) => teamLink(r.team) }, { h: "Grading", wide: 1, v: (r) => r.record },
+    { h: "Strength", n: 1, wide: 1, v: (r) => signed(r.strength) },
+    ...ODDS_COLS.map((c, j) => ({ h: c, n: 1, v: (r) => oddsCell(r.p[j]) })),
+    { h: "Any", n: 1, wide: 1, v: (r) => oddsCell(r.any) },
+  ], rows, { rowClass: (r) => isMine(r.team) ? "hl" : "" }) : el("p", { class: "note" }, "No teams match."));
+  out.push(el("p", { class: "note" }, "Percent chance of each league: VJCL is the Victorian Junior Championship League, VJL1 to VJL4 are Leagues 1 to 4. " +
+    "Grading is the team's record and points difference so far. Strength is its estimated winning margin against a middle-ranked team in the age group. " +
+    "Pool 3 and below can't reach the Championship League, and Pools 7 and below reach League 4 only if the VJBL picks them."));
+  out.push(el("details", { class: "more" }, el("summary", {}, "How the map fills each league"),
+    table([{ h: "League", v: (r) => r[0] }, { h: "Places", n: 1, v: (r) => r[1] }, { h: "How teams get there", v: (r) => r[2] }], O.routes),
+    el("p", { class: "note" }, "The Phase Two pools that lead to the top leagues:"),
+    table([{ h: "Pool", v: (r) => r[0] }, { h: "Made up of", v: (r) => r[1] }, { h: "Highest league", v: (r) => r[2] }], O.pools2),
+    el("p", { class: "note" }, el("a", { href: O.map, target: "_blank", rel: "noopener" }, "The grading map (PDF) ↗"))));
+  out.push(el("details", { class: "more" }, el("summary", {}, "How the chances are worked out"), el("ul", {},
+    el("li", {}, "Each team's strength starts from its seed: the map snakes seeds through the pools (Pool 1 holds seeds 1 to 24, Pool 2 seeds 25 to 40, and so on), and each team could hold any of its group's seeds. Its grading results then update that estimate."),
+    el("li", {}, `How far apart the pools are can't be measured until the crossovers, since every game so far is inside one group. VJBL's seeding is assumed to match true strength with a correlation of ${O.rho}.`),
+    el("li", {}, `A game's margin varies by about ${O.sigma} points either side of the difference in strength, as U14 Boys league results did from 2022 to 2025.`),
+    el("li", {}, "Ladders go on competition points (3 for a win, 2 for a draw, 1 for a loss), then the result between the tied teams, then percentage."),
+    O.assumptions.map((a) => el("li", {}, a)))));
+  return out;
+}
+
+// Team scoring from the box scores, for a page published without players' names.
+function viewScoring(D) {
+  const out = [el("h1", {}, "Scoring")];
+  out.push(el("p", { class: "sub" }, "Each team's scoring from PlayHQ's box scores: points, free throws (FT), 2- and 3-pointers made (2P, 3P) and fouls (F). Players aren't named on this page."));
+  out.push(el("div", { class: "filters" }, sel("Age", "age", D.ages), sel("Gender", "gender", D.genders), sel("Club", "club", D.clubs),
+    sel("Rank by", "sort", Object.entries(SORTS).map(([k, [t]]) => [k, t]), { all: null }),
+    el("label", {}, "Minimum games", el("input", { type: "number", min: 1, max: 50, value: S.f.min, onchange: (e) => setF("min", Math.max(1, +e.target.value || 1)) })),
+    search("Team name contains", "pq", "Team name")));
+  const q = S.f.pq.toLowerCase(), key = SORTS[S.f.sort][1];
+  const pool = D.scoring.filter((s) => ageGenderFilter()(s.team) && (!S.f.club || s.team.club === S.f.club));
+  const rows = pool.filter((s) => s.games >= S.f.min && (!q || s.team.name.toLowerCase().includes(q)))
+    .sort((a, b) => key(b) - key(a) || b.pts - a.pts);
+  rows.forEach((s, i) => s.rank = i + 1);
+  const shown = rows.slice(0, S.limit);
+  out.push(table([
+    { h: "#", n: 1, v: (s) => s.rank }, { h: "Team", v: (s) => teamLink(s.team) },
+    { h: "G", n: 1, v: (s) => s.games }, { h: "Pts", n: 1, v: (s) => s.pts }, { h: "PPG", n: 1, v: (s) => s.ppg.toFixed(1) },
+    { h: "FT", n: 1, wide: 1, v: (s) => s.ft }, { h: "2P", n: 1, wide: 1, v: (s) => s.two }, { h: "3P", n: 1, v: (s) => s.three },
+    { h: "F", n: 1, v: (s) => s.fouls },
+  ], shown, { rowClass: (s) => isMine(s.team) ? "hl" : "" }));
+  out.push(more(rows.length, shown.length));
+  out.push(el("h2", {}, "Where the points come from"), el("p", { class: "sub" },
+    (S.f.club ? `${S.f.club}'s` : "All") + " points by age group: free throws, 2-pointers and 3-pointers."));
+  out.push(pointsMix(pool));
+  return out;
+}
+
+const MIX_KEYS = [{ name: "Free throws", colour: "var(--s4)" }, { name: "2-pointers", colour: "var(--s1)" }, { name: "3-pointers", colour: "var(--s2)" }];
+function pointsMix(players) {
+  const by = new Map();
+  for (const p of players) {
+    const k = `${p.team.age} ${p.team.gender}`;
+    if (!by.has(k)) by.set(k, [0, 0, 0]);
+    const s = by.get(k); s[0] += p.ft; s[1] += 2 * p.two; s[2] += 3 * p.three;
+  }
+  if (!by.size) return el("p", { class: "note" }, "No player stats in this selection.");
+  return stackBars(MIX_KEYS, [...by.entries()].sort((a, b) => natural(a[0], b[0])).map(([k, parts]) => {
+    const sh = share(parts);
+    return { label: k, sub: plural(parts[0] + parts[1] + parts[2], "point"), parts, value: `3P ${pct(sh[2])}`,
+      tip: `${k}: ${pct(sh[0])} free throws, ${pct(sh[1])} 2-pointers, ${pct(sh[2])} 3-pointers` };
+  }));
+}
+const SPREAD_KEYS = [{ name: "Top scorer", colour: "var(--s1)" }, { name: "Second", colour: "var(--s3)" },
+  { name: "Third", colour: "var(--s4)" }, { name: "Everyone else", colour: "var(--other)" }];
+function scoringSpread(players) {
+  const by = new Map();
+  for (const p of players) { if (!by.has(p.team)) by.set(p.team, []); by.get(p.team).push(p); }
+  let teams = [...by.entries()].map(([team, ps]) => {
+    ps.sort((a, b) => b.pts - a.pts);
+    const pts = ps.map((p) => p.pts), tot = pts.reduce((a, b) => a + b, 0);
+    return { team, ps, tot, games: Math.max(...ps.map((p) => p.games)),
+      parts: [pts[0] || 0, pts[1] || 0, pts[2] || 0, pts.slice(3).reduce((a, b) => a + b, 0)] };
+  }).filter((t) => t.ps.filter((p) => p.pts > 0).length >= 3)  // fewer: a scoresheet entered without its scorers
+    .sort((a, b) => b.parts[0] / b.tot - a.parts[0] / a.tot || natural(a.team.name, b.team.name));
+  if (!teams.length) return el("p", { class: "note" }, "No player stats in this selection.");
+  if (!S.f.club) teams = teams.slice(0, 25);
+  return stackBars(SPREAD_KEYS, teams.map((t) => ({
+    label: t.team.name, sub: plural(t.games, "game"), parts: t.parts, value: `Top ${pct(t.parts[0] / t.tot * 100)}`, hl: isMine(t.team),
+    tip: `${t.team.name}: ` + t.ps.slice(0, 3).map((p) => `${p.name} ${p.pts}`).join(", ") + ` of ${t.tot} points`,
+    onclick: () => { location.hash = "team/" + encodeURIComponent(t.team.name); } })));
+}
+
+// ---------- Teams ---------------------------------------------------------------
+function viewTeams(D) {
+  const out = [el("h1", {}, "Teams")];
+  out.push(el("div", { class: "filters" },
+    el("label", {}, "My club (highlighted everywhere)", el("select", { onchange: (e) => { S.myClub = e.target.value; store.set("myClub", S.myClub); render(); } },
+      el("option", { value: "" }, "None"), D.clubs.map((c) => el("option", { value: c, selected: c === S.myClub }, c)))),
+    sel("Club", "club", D.clubs), sel("Age", "age", D.ages), sel("Gender", "gender", D.genders)));
+  const recs = new Map();
+  for (const r of D.tg) { if (!recs.has(r.team.i)) recs.set(r.team.i, []); recs.get(r.team.i).push(r); }
+  const club = S.f.club || S.myClub;
+  if (!club) return out.concat(el("p", { class: "note" }, "Pick a club to list its teams."));
+  const teams = D.teams.filter((t) => t.club === club && ageGenderFilter()(t)).sort((a, b) => natural(a.name, b.name));
+  out.push(table([
+    { h: "Team", v: (t) => teamLink(t) }, { h: "W-L", n: 1, v: (t) => wl(record(recs.get(t.i) || [])) },
+    { h: "Avg margin", n: 1, v: (t) => signed(record(recs.get(t.i) || []).margin) },
+    { h: "Rating", n: 1, wide: 1, v: (t) => D.rating.has(t.i) ? signed(D.rating.get(t.i).rating) : "–" },
+  ], teams, { onRow: (t) => { location.hash = "team/" + encodeURIComponent(t.name); } }));
+  return out;
+}
+function viewTeam(D, name) {
+  const t = D.byName.get(name);
+  const out = [el("a", { class: "back", href: "javascript:history.back()" }, "← Back")];
+  if (!t) return out.concat(el("p", { class: "note" }, `No team called "${name}" in this season.`));
+  const rows = D.tg.filter((r) => r.team === t), r = record(rows), rt = D.rating.get(t.i);
+  const games = D.games.filter((g) => g.home === t || g.away === t).sort((a, b) => (a.date || "9").localeCompare(b.date || "9") || (a.time || "").localeCompare(b.time || ""));
+  const grade = games.length ? games[games.length - 1].grade.name : "";
+  out.push(el("h1", {}, t.name), el("p", { class: "sub" }, [t.club, grade ? "current grade: " + grade : ""].filter(Boolean).join(" · ")));
+  out.push(tiles([["Wins-losses" + (r.d ? "-draws" : ""), wl(r)], ["Average margin", signed(r.margin)],
+    ["Rating", rt ? signed(rt.rating) : "–"], [`Rank in ${t.age} ${t.gender}`, rt ? `#${rt.rank} of ${rt.of}` : "–"]]));
+  const lad = D.ladders.filter((l) => l.team === t);
+  if (lad.length) {
+    const last = lad[lad.length - 1];
+    out.push(el("p", { class: "note" }, `Ladder: ${ordinal(last.pos)} in ${last.grade.name}${last.pool ? " · " + last.pool : ""} (${last.W}-${last.L}, ${last.pts} pts)`));
+  }
+  const od = D.oddsOf.get(t);
+  if (od) out.push(el("p", { class: "note" }, "League chances from the grading map: ",
+    ODDS_COLS.map((c, j) => `${c} ${oddsText(od.p[j])}%`).join(" · "), " (", el("a", { href: "#odds" }, "League odds"), ")"));
+  out.push(el("h2", {}, "Games"));
+  let day = null, cards = null;
+  for (const g of games) {
+    if (g.date !== day) { day = g.date; out.push(el("div", { class: "day" }, fmtDate(g.date))); cards = el("div", { class: "cards" }); out.push(cards); }
+    cards.append(gameCard(g, g.sides.find((x) => x.team === t)));
+  }
+  const ps = D.players.filter((p) => p.team === t).sort((a, b) => b.pts - a.pts);
+  const sc = D.scoringOf.get(t);
+  if (!ps.length && sc) {
+    out.push(el("h2", {}, "Scoring"), el("p", { class: "sub" }, `From the box scores of ${plural(sc.games, "game")}.`));
+    out.push(table([{ h: "G", n: 1, v: (s) => s.games }, { h: "Pts", n: 1, v: (s) => s.pts }, { h: "PPG", n: 1, v: (s) => s.ppg.toFixed(1) },
+      { h: "FT", n: 1, v: (s) => s.ft }, { h: "2P", n: 1, v: (s) => s.two }, { h: "3P", n: 1, v: (s) => s.three }, { h: "F", n: 1, v: (s) => s.fouls }], [sc]));
+  }
+  if (ps.length) {
+    out.push(el("h2", {}, "Players"));
+    out.push(table([{ h: "Player", v: (p) => p.name + (p.num ? ` #${p.num}` : "") }, { h: "G", n: 1, v: (p) => p.games },
+      { h: "Pts", n: 1, v: (p) => p.pts }, { h: "PPG", n: 1, v: (p) => p.ppg.toFixed(1) }, { h: "FT", n: 1, wide: 1, v: (p) => p.ft },
+      { h: "2P", n: 1, wide: 1, v: (p) => p.two }, { h: "3P", n: 1, v: (p) => p.three }, { h: "F", n: 1, v: (p) => p.fouls }], ps));
+  }
+  return out;
+}
+const ordinal = (n) => n + (["th", "st", "nd", "rd"][(n % 100 - 20) % 10] || ["th", "st", "nd", "rd"][n % 100] || "th");
+
+// ---------- app -------------------------------------------------------------------
+const VIEWS = { results: viewResults, ladders: viewLadders, rankings: viewRankings, clubs: viewClubs, grading: viewGrading,
+  players: viewPlayers, teams: viewTeams, odds: viewOdds };
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h.startsWith("team/")) return ["team", h.slice(5)];
+  return [VIEWS[h] ? h : "results", null];
+}
+function render() {
+  const main = document.getElementById("main");
+  hideTip();
+  if (!S.D) return;
+  const [view, arg] = route();
+  for (const a of document.querySelectorAll('#tabs a[href="#odds"]')) a.hidden = !S.D.odds;
+  for (const a of document.querySelectorAll('#tabs a[href="#players"]'))
+    a.textContent = !S.D.players.length && S.D.scoring.length ? "Scoring" : "Players";
+  for (const a of document.querySelectorAll("#tabs a"))
+    a.setAttribute("aria-current", a.getAttribute("href") === "#" + view || (view === "team" && a.getAttribute("href") === "#teams") ? "page" : "false");
+  try {
+    main.replaceChildren(...(view === "team" ? viewTeam(S.D, arg) : VIEWS[view](S.D)).filter(Boolean));
+  } catch (e) {
+    main.replaceChildren(el("p", { class: "note" }, "Something went wrong showing this page: " + e.message));
+    console.error(e);
+  }
+}
+async function loadSeason(folder) {
+  S.folder = folder; store.set("season", folder);
+  document.getElementById("main").replaceChildren(el("p", { class: "note" }, "Loading…"));
+  S.D = decode(await loadJSON(`data/${encodeURIComponent(folder)}.json`));
+  document.getElementById("foot").textContent = `Unofficial archive of VJBL results from PlayHQ · ${S.D.label} data from ${S.D.updated || "?"}` +
+    (S.published ? ` · published ${S.published}` : "");
+  S.limit = MAX;
+  render();
+}
+async function start() {
+  try {
+    const idx = await loadJSON("data/index.json");
+    S.seasons = idx.seasons;
+    S.published = idx.published;
+    const pick = document.getElementById("season");
+    pick.replaceChildren(...S.seasons.map((s) => el("option", { value: s.folder }, s.label)));
+    const want = store.get("season", S.seasons[0].folder);
+    const folder = S.seasons.some((s) => s.folder === want) ? want : S.seasons[0].folder;
+    pick.value = folder;
+    pick.addEventListener("change", (e) => loadSeason(e.target.value));
+    window.addEventListener("hashchange", () => { S.limit = MAX; render(); window.scrollTo(0, 0); });
+    let lastW = window.innerWidth, t = null;  // redraw the charts for a new screen width
+    window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => {
+      if (Math.abs(window.innerWidth - lastW) > 40) { lastW = window.innerWidth; render(); } }, 250); });
+    await loadSeason(folder);
+  } catch (e) {
+    document.getElementById("main").replaceChildren(el("p", { class: "note" }, "Couldn't load the data: " + e.message));
+  }
+}
+start();
+</script>
+</body>
+</html>
